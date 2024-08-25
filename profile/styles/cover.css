@@ -1,0 +1,63 @@
+#cover {
+  background-image: linear-gradient(90deg, rgb(71, 2, 150), rgb(0 212 255 / 100%));
+  color: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4rem;
+}
+
+#cover #avatar {
+  display: block;
+}
+
+#cover #avatar img {
+  max-width: 12rem;
+  margin: 0;
+  border: 4px solid;
+  border-radius: 2rem;
+}
+
+#cover #info {
+  max-width: 36rem;
+
+  display: flex;
+  flex-flow: column;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+#cover header {
+  display: flex;
+  flex-flow: column;
+  gap: 0.6rem;
+}
+
+#cover .heading {
+  margin: 0;
+  font-size: 3rem;
+}
+
+#cover .social-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 1.5rem;
+
+  display: flex;
+  gap: 1rem;
+}
+
+#cover .social-links a {
+  color: white;
+}
+
+#cover .description {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+#cover span {
+  font-weight: bold;
+}

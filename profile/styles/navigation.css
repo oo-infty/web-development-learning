@@ -1,0 +1,48 @@
+#navigation {
+    position: sticky;
+    display: flex;
+    width: 100vw;
+    height: 4rem;
+    background-color: rgb(0 0 0 / 80%);
+}
+
+#navigation ul {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#navigation li {
+    display: flex;
+    align-items: center;
+}
+
+#navigation a {
+    flex: 1;
+    display: flex;
+    color: white;
+    text-decoration: none;
+    outline-color: transparent;
+    text-align: center;
+    line-height: 3rem;
+    transition: background-color 0.2s;
+}
+
+#navigation a:hover,
+#navigation a:active {
+    background: rgb(50 50 50 / 80%);
+}
+
+#navigation a i {
+    margin: 1rem;
+    margin-right: 0.5rem;
+    font-size: 1.2rem;
+}
+
+#navigation a span {
+    font-size: 1.2rem;
+    margin-right: 1rem;
+}

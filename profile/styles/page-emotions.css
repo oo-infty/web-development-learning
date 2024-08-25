@@ -1,0 +1,29 @@
+#page-emotions ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    justify-content: space-evenly;
+  }
+  
+  #page-emotions li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+    min-width: 60%;
+    background-color: gray;
+  }
+
+  #page-emotions li:nth-child(2n + 0) {
+    flex-flow: row-reverse;
+  }
+  
+  #page-emotions img {
+    flex: 1;
+    max-height: 8rem;
+  }
+
+  #page-emotions div {
+    flex: 3;
+  }

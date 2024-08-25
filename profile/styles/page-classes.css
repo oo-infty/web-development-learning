@@ -1,0 +1,83 @@
+#page-classes {
+  display: flex;
+  flex-flow: column;
+}
+
+#page-classes #classes-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3rem;
+}
+
+#page-classes ul {
+  list-style: none;
+  padding-left: 0;
+  width: min(50%, 40rem);
+  counter-reset: class-item;
+
+  display: flex;
+  flex-flow: column;
+  gap: 0.5rem;
+}
+
+#page-classes li {
+  border: 2px solid;
+  flex: 1;
+  
+  display: flex;
+}
+
+#page-classes .item-bar {
+  counter-increment: class-item;
+  margin: 0.5rem;
+  border: 2px solid;
+}
+
+#page-classes li:nth-child(1) .item-bar {
+  border-color: hsl(0, 100%, 50%);
+}
+
+#page-classes li:nth-child(2) .item-bar {
+  border-color: hsl(30, 100%, 50%);
+}
+
+#page-classes li:nth-child(3) .item-bar {
+  border-color: hsl(60, 100%, 50%);
+}
+
+#page-classes li:nth-child(4) .item-bar {
+  border-color: hsl(90, 100%, 50%);
+}
+
+#page-classes li:nth-child(5) .item-bar {
+  border-color: hsl(175, 100%, 50%);
+}
+
+#page-classes li:nth-child(6) .item-bar {
+  border-color: hsl(238, 100%, 50%);
+}
+
+
+#page-classes p {
+  padding: 1rem;
+  padding-left: 0.25rem;
+  margin: 0;
+  transition: padding 0.25s;
+
+  flex: 1;
+}
+
+#page-classes p:hover {
+  padding: 2rem;
+  padding-left: 0.25rem;
+}
+
+#page-classes .image {
+  display: flex;
+}
+
+#page-classes img {
+  max-height: 50vh;
+  border: 3px solid;
+}

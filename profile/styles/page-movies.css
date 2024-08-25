@@ -1,0 +1,22 @@
+#page-movies {
+  display: flex;
+  flex-flow: column;
+}
+
+#page-movies ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+#page-movies li {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+}
+
+#page-movies img {
+  max-height: 15rem;
+}
