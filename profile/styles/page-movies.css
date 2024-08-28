@@ -27,7 +27,7 @@
   gap: 1rem;
 }
 
-#page-movies .movie-cover {
+.movie-cover {
   max-height: min(60vh, 20rem);
   max-width: 15rem;
   border: 2px solid white;
@@ -35,7 +35,7 @@
   display: flex;
 }
 
-#page-movies li:hover .movie-cover {
+li:hover .movie-cover {
   display: none;
 }
 
@@ -47,7 +47,7 @@
 #page-movies h2 {
   margin: 0;
   max-width: 15rem;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   font-weight: normal;
   font-style: italic;
 }
@@ -60,7 +60,7 @@
   display: none;
 }
 
-#page-movies li:hover .movie-description {
+li:hover .movie-description {
   display: flex;
   flex-flow: column;
   align-items: center;
@@ -75,7 +75,6 @@
 .movie-description p {
   margin: 0;
   max-width: 16rem;
-  font-size: 1.2rem;
 
   hyphens: auto;
   word-wrap: break-word;
