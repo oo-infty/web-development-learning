@@ -23,7 +23,7 @@
 #navigation a {
     flex: 1;
     display: flex;
-    color: white;
+    color: inherit;
     text-decoration: none;
     outline-color: transparent;
     text-align: center;

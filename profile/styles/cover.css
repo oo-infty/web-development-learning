@@ -50,7 +50,7 @@
 }
 
 #cover .social-links a {
-  color: white;
+  color: inherit;
 }
 
 #cover .description {

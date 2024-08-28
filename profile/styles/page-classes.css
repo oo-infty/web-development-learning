@@ -14,7 +14,6 @@
   list-style: none;
   padding-left: 0;
   width: min(50%, 40rem);
-  counter-reset: class-item;
 
   display: flex;
   flex-flow: column;
