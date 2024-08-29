@@ -1,5 +1,7 @@
 #cover {
-  background-image: linear-gradient(90deg, rgb(71, 2, 150), rgb(0 212 255 / 100%));
+  background-image: url("../assets/images/background.jpg");
+  background-position: center;
+  background-size: cover;
   color: white;
 
   display: flex;
