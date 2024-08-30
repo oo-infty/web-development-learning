@@ -28,8 +28,6 @@
 }
 
 .movie-cover {
-  max-height: min(60vh, 20rem);
-  max-width: 15rem;
   border: 2px solid white;
 
   display: flex;
@@ -40,6 +38,8 @@ li:hover .movie-cover {
 }
 
 .movie-cover img {
+  max-height: min(60vh, 20rem);
+  max-width: 15rem;
   margin: 0;
   flex: 1;
 }
