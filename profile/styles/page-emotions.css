@@ -1,11 +1,19 @@
 #page-emotions {
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+.emotion-container {
   display: flex;
-  flex-flow: column;
+  flex-flow: row wrap;
+  align-items: center;
+  justify-content: center;
 }
 
 #page-emotions ul {
   list-style: none;
   padding: 0 10rem;
+  flex: 1;
 
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));

@@ -1,9 +1,9 @@
 #page-classes {
-  display: flex;
-  flex-flow: column;
+  display: grid;
+  grid-template-rows: auto 1fr;
 }
 
-#page-classes #classes-content {
+#page-classes #classes-container {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -23,7 +23,7 @@
 #page-classes li {
   border: 2px solid;
   flex: 1;
-  
+
   display: flex;
 }
 
