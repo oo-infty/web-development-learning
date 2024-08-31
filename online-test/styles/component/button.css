@@ -1,0 +1,36 @@
+.round-button {
+  color: black;
+  background-color: white;
+  text-decoration: none;
+  border-radius: calc(4em / 3);
+  padding: 0.5em 1em;
+  transition: background-color 0.25s;
+}
+
+.round-button:hover,
+.round-button:focus,
+.round-button:active {
+  background-color: #cdcdcd;
+}
+
+.round-addr-button {
+  color: black;
+  background-color: white;
+  text-decoration: none;
+  border-radius: calc(4em / 3);
+  transition: background-color 0.25s;
+
+  display: flex;
+}
+
+.round-addr-button:hover,
+.round-addr-button:focus,
+.round-addr-button:active {
+  background-color: #cdcdcd;
+}
+
+.round-addr-button *:first-child {
+  margin: 0;
+  padding: 0.5em 1em;
+  flex: 1;
+}

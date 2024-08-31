@@ -41,27 +41,6 @@ body {
 }
 
 .index-entrance {
-  display: flex;
-}
-
-.index-entrance a {
-  color: black;
-  background-color: white;
-  text-decoration: none;
-  border-radius: 2rem;
-  transition: background-color 0.25s;
-
-  display: flex;
-}
-
-.index-entrance a:hover,
-.index-entrance a:active {
-  background-color: #cdcdcd;
-}
-
-.index-entrance p {
-  margin: 0;
-  padding: 0.75rem 1.5rem;
   font-size: 1.5rem;
-  flex: 1;
+  display: flex;
 }
