@@ -39,18 +39,11 @@ body {
 
 .login-entry {
   padding: 1rem;
+  width: 16rem;
 
   display: flex;
   flex-flow: column;
   gap: 0.5rem;
-}
-
-.login-entry label {
-  width: 16rem;
-}
-
-.login-entry input {
-  width: 16rem;
 }
 
 .login-submit {
