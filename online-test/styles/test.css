@@ -105,7 +105,7 @@ body {
 
 .question-container {
   flex: 1;
-  width: 80vw;
+  width: calc(100vw - 20vw);
   padding: 0;
   overflow-x: scroll;
   scroll-snap-type: x mandatory;
@@ -119,5 +119,15 @@ body {
   flex: 1;
   box-sizing: border-box;
   padding: 2.5rem;
-  min-width: 80vw;
+  min-width: calc(100vw - 20vw);
+}
+
+.introduction h1 {
+  font-weight: normal;
+  font-style: italic;
+}
+
+.introduction ul {
+  font-size: 1.25em;
+  margin: 0;
 }
