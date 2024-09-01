@@ -6,7 +6,7 @@ body {
   background-image:
     linear-gradient(90deg, black, transparent),
     /* https://unsplash.com/photos/source-code-screengrab-JNz9bQD3Oio */
-    url("../assets/code.jpg");
+    url("../assets/images/code.jpg");
   background-size: cover;
 }
 
