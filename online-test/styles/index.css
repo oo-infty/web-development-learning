@@ -4,9 +4,9 @@ body {
   grid-template-rows: auto 1fr;
   min-height: 100vh;
   background-image:
-    linear-gradient(90deg, black, transparent),
+    linear-gradient(90deg, rgb(0, 0, 0, 80%), transparent),
     /* https://unsplash.com/photos/source-code-screengrab-JNz9bQD3Oio */
-    url("../assets/images/code.jpg");
+    url("../assets/images/background-index.jpg");
   background-size: cover;
 }
 

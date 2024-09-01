@@ -1,0 +1,43 @@
+body {
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: auto 1fr;
+  min-height: 100vh;
+  background-image:
+  linear-gradient(90deg, rgb(0, 0, 0, 80%), transparent),
+    /* https://unsplash.com/photos/shallow-focus-photography-of-computer-codes-BfrQnKBulYQ */
+    url("../assets/images/background-result.jpg");
+  background-size: cover;
+}
+
+.result-body {
+  padding: 2rem;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  gap: 1.25rem;
+}
+
+.result-demonstration {
+  display: flex;
+  flex-flow: column;
+  gap: 1rem;
+}
+
+.result-demonstration p {
+  margin: 0;
+  padding: 0;
+  font-size: 1.5rem;
+}
+
+.result-emphasis {
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.result-control {
+  font-size: 1.5rem;
+
+  display: flex;
+  gap: 1rem;
+}
