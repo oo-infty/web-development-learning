@@ -26,7 +26,7 @@
 
 .selection-list label::before {
   counter-increment: problem-option;
-  font-style: italic;
+  font-weight: bold;
   content: counter(problem-option, upper-alpha) ". ";
 }
 

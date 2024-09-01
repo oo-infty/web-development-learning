@@ -21,11 +21,6 @@
   padding: 0;
 }
 
-.question-number {
-  font-style: italic;
-  font-weight: normal;
-}
-
 .single-selection .question-number::before {
   counter-increment: question;
   content: "Question NO." counter(question) " Single Selection";

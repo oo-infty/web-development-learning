@@ -122,11 +122,6 @@ body {
   min-width: calc(100vw - 20vw);
 }
 
-.introduction h1 {
-  font-weight: normal;
-  font-style: italic;
-}
-
 .introduction ul {
   font-size: 1.25em;
   margin: 0;
