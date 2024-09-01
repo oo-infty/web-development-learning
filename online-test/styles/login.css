@@ -46,6 +46,10 @@ body {
   gap: 0.5rem;
 }
 
+.input-box #username:invalid {
+  border-color: red;
+}
+
 .login-submit {
   display: flex;
   flex-flow: column;

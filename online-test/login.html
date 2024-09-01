@@ -11,6 +11,8 @@
   <link rel="stylesheet" href="./styles/components/input.css" />
   <link rel="stylesheet" href="./styles/layouts/navigation.css" />
   <link rel="stylesheet" href="./styles/login.css" />
+
+  <script src="./scripts/login.js" defer></script>
 </head>
 
 <body>
@@ -42,13 +44,13 @@
         <li class="login-entry">
           <label for="username" class="form-component">Username</label>
           <div class="input-box">
-            <input type="text" id="username" name="username" required="required" />
+            <input type="text" id="username" name="username" required autofocus pattern="[A-Za-z0-9\-_]+" />
           </div>
         </li>
       </ul>
 
       <div class="login-submit">
-        <button class="form-component round-button">
+        <button class="form-component round-button" id="button-start">
           Start
         </button>
       </div>
