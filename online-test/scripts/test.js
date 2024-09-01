@@ -16,20 +16,25 @@ function generateQuestionNavigation() {
   let num = 0;
 
   for (const question of questionContainer.children) {
-    num += 1;
-
     let text = document.createElement("p");
     text.textContent = num;
 
     let link = document.createElement("a");
-    link.setAttribute("href", `#${question.id}`);
+    link.setAttribute("id", `button-question-${question.id}`);
     link.appendChild(text);
+    const scrollX = questionContainer.clientWidth * num;
+    link.addEventListener("click", (event) => {
+      questionContainer.scroll(scrollX, 0);
+      event.preventDefault();
+    });
 
     let entry = document.createElement("li");
     entry.setAttribute("class", "panel-question-entry");
     entry.appendChild(link);
 
     questionNavigation.appendChild(entry);
+
+    num += 1;
   }
 }
 
