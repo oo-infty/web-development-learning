@@ -1,0 +1,123 @@
+body {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    "site-navigation site-navigation"
+    "test-panel test-body";
+  min-height: 100vh;
+}
+
+.site-navigation {
+  grid-area: site-navigation;
+}
+
+.test-panel {
+  grid-area: test-panel;
+  width: 20vw;
+  box-sizing: border-box;
+  background-color: #232323;
+  border-right: 1px solid gray;
+
+  display: flex;
+  flex-flow: column;
+  gap: 1rem;
+}
+
+.panel-countdown {
+  align-self: center;
+
+  display: flex;
+}
+
+.panel-countdown p {
+  margin: 0;
+  padding: 1rem;
+  font-size: 3rem;
+  flex: 1;
+}
+
+.panel-question-container {
+  list-style: none;
+  margin: 0;
+  padding: 0.5rem;
+
+  display: grid;
+  justify-content: center;
+  grid-template-columns: repeat(auto-fill, 2em);
+  gap: 0.5rem;
+}
+
+.panel-question-entry {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.panel-question-entry a {
+  color: inherit;
+  text-decoration: none;
+  border: 1px solid gray;
+  border-radius: 0.5em;
+  transition: background-color 0.25s;
+  flex: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.panel-question-entry a:hover,
+.panel-question-entry a:focus,
+.panel-question-entry a:active {
+  background-color: #505050;
+}
+
+.panel-question-entry p {
+  box-sizing: border-box;
+  height: 2em;
+  width: 2em;
+  margin: 0;
+  padding: 0.25em;
+  text-align: center;
+}
+
+.panel-control {
+  list-style: none;
+  margin: 0;
+  padding: 0.5rem;
+
+  display: flex;
+  flex-flow: column;
+  gap: 0.5rem;
+}
+
+.front-spacing {
+  margin-top: auto;
+}
+
+.test-body {
+  grid-area: test-body;
+
+  display: flex;
+  flex-flow: column;
+}
+
+.question-container {
+  flex: 1;
+  width: 80vw;
+  padding: 0;
+  overflow-x: scroll;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+
+  display: flex;
+}
+
+.question-entry {
+  scroll-snap-align: start;
+  flex: 1;
+  box-sizing: border-box;
+  padding: 2.5rem;
+  min-width: 80vw;
+}

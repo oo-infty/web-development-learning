@@ -1,0 +1,46 @@
+.selection-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  display: flex;
+  flex-flow: column;
+  gap: 0.5em;
+
+  counter-reset: problem-option;
+}
+
+.selection-list li {
+  display: flex;
+}
+
+.selection-list label {
+  border: 1px solid gray;
+  border-radius: 0.5em;
+  background-color: inherit;
+  transition: border-color 0.25s, background-color 0.25s;
+
+  flex: 1;
+  padding: 0.5em;
+}
+
+.selection-list label::before {
+  counter-increment: problem-option;
+  font-style: italic;
+  content: counter(problem-option, upper-alpha) ". ";
+}
+
+.selection-list label:hover,
+.selection-list label:focus {
+  background-color: #505050;
+}
+
+.selection-list input[type="radio"],
+.selection-list input[type="checkbox"] {
+  display: none;
+}
+
+.selection-list input[type="radio"]:checked + label,
+.selection-list input[type="checkbox"]:checked + label {
+  border-color: white;
+}

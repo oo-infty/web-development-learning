@@ -1,0 +1,25 @@
+.input-box {
+  display: flex;
+  flex-flow: column;
+}
+
+.input-box input {
+  flex: 1;
+  margin: 0;
+  padding: 0.5em;
+  font-size: inherit;
+  border: 1px solid gray;
+  border-radius: 0.5em;
+  background-color: inherit;
+  transition: border-color 0.25s, background-color 0.25s;
+  outline: none;
+}
+
+.input-box input:hover,
+.input-box input:focus {
+  background-color: #505050;
+}
+
+.input-box input:focus-visible {
+  border-color: white;
+}
