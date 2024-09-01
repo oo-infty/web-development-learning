@@ -14,6 +14,8 @@
   <link rel="stylesheet" href="./styles/layouts/navigation.css" />
   <link rel="stylesheet" href="./styles/layouts/question.css" />
   <link rel="stylesheet" href="./styles/test.css" />
+
+  <script src="./scripts/test.js" defer></script>
 </head>
 
 <body>
@@ -41,27 +43,29 @@
 
   <aside class="test-panel">
     <div class="panel-countdown">
-      <p>00:00</p>
+      <p></p>
     </div>
 
     <ul class="panel-question-container">
-      <li class="panel-question-entry">
-        <a href="#question-1">
-          <p>1</p>
-        </a>
-      </li>
+      <!-- To be filled dynamically by JavaScript
+        <li class="panel-question-entry">
+          <a href="#question-1">
+            <p>1</p>
+          </a>
+        </li>
 
-      <li class="panel-question-entry">
-        <a href="#question-2">
-          <p>2</p>
-        </a>
-      </li>
+        <li class="panel-question-entry">
+          <a href="#question-2">
+            <p>2</p>
+          </a>
+        </li>
 
-      <li class="panel-question-entry">
-        <a href="#question-3">
-          <p>3</p>
-        </a>
-      </li>
+        <li class="panel-question-entry">
+          <a href="#question-3">
+            <p>3</p>
+          </a>
+        </li>
+      -->
     </ul>
 
     <ul class="panel-control front-spacing">
@@ -88,11 +92,11 @@
           Leave
         </button>
       </li>
-      </div>
+    </ul>
   </aside>
 
   <main class="test-body">
-    <form class="question-container hide-scrollbar">
+    <form action="TODO" method="post" class="question-container hide-scrollbar">
       <section class="question-entry single-selection" id="question-1">
         <h1 class="question-number"></h1>
         <p>
