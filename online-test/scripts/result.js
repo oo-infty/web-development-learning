@@ -5,37 +5,32 @@ function generateDemonstration() {
   const score = Number(scoreNode.textContent);
   demonstration.removeChild(scoreNode);
 
-  function createEmphasis(text, capitalize) {
-    const span = document.createElement("span");
-    span.setAttribute("class", "result-emphasis");
-    span.textContent = text;
-    return span;
-  }
+  const minutesNode = document.querySelector("#result-minutes");
+  const min = Number(minutesNode.textContent);
+  demonstration.removeChild(minutesNode);
 
-  const paraScore = document.createElement("p");
-  paraScore.appendChild(document.createTextNode("Your score is"));
-  paraScore.appendChild(document.createElement("br"));
-  paraScore.appendChild(createEmphasis(`${score} pts`));
-  demonstration.appendChild(paraScore);
+  const secondsNode = document.querySelector("#result-seconds");
+  const sec = Number(secondsNode.textContent);
+  demonstration.removeChild(secondsNode);
 
-  if (score >= 75) {
-    const paraLevel = document.createElement("p");
-    paraLevel.appendChild(document.createTextNode("Congradulations! You are now"));
-    paraLevel.appendChild(document.createElement("br"));
+  const paraTime = demonstration.querySelector("#card-time p:last-child");
+  paraTime.textContent = (sec !== 0 ? `${min} min ${sec} s` : `${min} min`);
 
-    if (score >= 90) {
-      paraLevel.appendChild(createEmphasis("ADVANCED CERTIFIED SYSTEM ADMINISTRATOR"));
-      demonstration.appendChild(paraLevel);
-    } else {
-      paraLevel.appendChild(createEmphasis("CERTIFIED SYSTEM ADMINISTRATOR"));
-      demonstration.appendChild(paraLevel);
-    }
+  const paraScore = demonstration.querySelector("#card-score p:last-child");
+  paraScore.textContent = `${score} pts`;
+
+  const paraLevelHeader = demonstration.querySelector("#card-level p:first-child");
+  const paraLevelValue = demonstration.querySelector("#card-level p:last-child");
+
+  if (score >= 90) {
+    paraLevelHeader.textContent = "Congradulations! You are now";
+    paraLevelValue.textContent = "ADVANCED CERTIFIED SYSTEM ADMINISTRATOR";
+  } else if (score >= 75) {
+    paraLevelHeader.textContent = "Congradulations! You are now";
+    paraLevelValue.textContent = "CERTIFIED SYSTEM ADMINISTRATOR";
   } else {
-    const paraLevel = document.createElement("p");
-    paraLevel.appendChild(document.createTextNode("Never mind. You have already made"));
-    paraLevel.appendChild(document.createElement("br"));
-    paraLevel.appendChild(createEmphasis("A GREAT PROGRESS"));
-    demonstration.appendChild(paraLevel);
+    paraLevelHeader.textContent = "Never mind. You have already made";
+    paraLevelValue.textContent = "A GREAT PROGRESS";
   }
 }
 

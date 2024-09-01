@@ -1,0 +1,16 @@
+.two-line-card {
+  display: flex;
+  flex-flow: column;
+  gap: 0.5em;
+}
+
+.two-line-card p {
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+}
+
+.two-line-card p:last-child {
+  font-size: calc(5em / 3);
+  font-weight: bold;
+}

@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="./styles/common.css" />
   <link rel="stylesheet" href="./styles/components/button.css" />
   <link rel="stylesheet" href="./styles/layouts/navigation.css" />
+  <link rel="stylesheet" href="./styles/layouts/card.css" />
   <link rel="stylesheet" href="./styles/result.css" />
 
   <script src="./scripts/result.js" defer></script>
@@ -40,20 +41,41 @@
 
   <main class="result-body">
     <div class="result-demonstration">
-      <!-- This is used by JavaScript to generate content and deleted afterward. -->
+      <!-- These are used by JavaScript to generate content and deleted afterward. -->
       <p id="result-score">100</p>
+      <p id="result-minutes">10</p>
+      <p id="result-seconds">30</p>
 
-      <!-- To be filled dynamically by JavaScript with the above element -->
-      <!--
-        <p>
-          Your score is<br />
-          <span class="result-emphasis">100 pts</span>
-        </p>
-        <p>
-          Congratulations! You are now<br />
-          <span class="result-emphasis">ADVANCED CERTIFIED SYSTEM ADMINISTRATOR</span>
-        </p>
-      -->
+      <div class="result-data">
+        <div class="two-line-card" id="card-time">
+          <p>Time you spent is</p>
+          <p>
+            <!-- To be filled dynamically by JavaScript with the above element -->
+            <!-- 10 min 30 s -->
+          </p>
+        </div>
+
+        <div class="two-line-card" id="card-score">
+          <p>Your score is</p>
+          <p>
+            <!-- To be filled dynamically by JavaScript with the above element -->
+            <!-- 100 pts -->
+          </p>
+        </div>
+      </div>
+
+      <div class="result-level">
+        <div class="two-line-card" id="card-level">
+          <p>
+            <!-- To be filled dynamically by JavaScript with the above element -->
+             <!-- Congradulations! You are now -->
+          </p>
+          <p>
+            <!-- To be filled dynamically by JavaScript with the above element -->
+            <!-- ADVANCED CERTIFIED SYSTEM ADMINISTRATOR -->
+          </p>
+        </div>
+      </div>
     </div>
 
     <div class="result-control">
