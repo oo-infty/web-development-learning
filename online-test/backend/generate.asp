@@ -69,35 +69,68 @@
     Set CreateCompletion = question
   End Function
 
-  ' Construct XML
-  root.appendChild( _
-    CreateSingleSelection( _
-      1, _
-      "Which command is used to trace the system calls made by a process, and which options would you use to trace a specific process ID (PID) and output the results to a file?", _
-      "<code>strace -p PID -o output.txt</code>", _
-      "<code>strace -c -p PID > output.txt</code>", _
-      "<code>strace -f -p PID | tee output.txt</code>", _
-      "<code>strace -t -p PID > output.txt</code>" _
-    ) _
-  )
+  Function GetUnixTimestamp()
+    Dim currentTime, unixEpoch, timeDifference
+    currentTime = Now
+    unixEpoch = DateSerial(1970, 1, 1)
+    timeDifference = DateDiff("s", unixEpoch, currentTime)
+    GetUnixTimestamp = timeDifference
+  End Function
 
-  root.appendChild( _
-    CreateMultipleSelection( _
-      2, _
-      "In Linux, how can you check the IP address of network interfaces?", _
-      "<code>ifconfig</code>", _
-      "<code>ip addr show</code>", _
-      "<code>netstat</code>", _
-      "<code>ping</code>" _
-    ) _
-  )
+  Function GenerateTestId()
+    GenerateTestId = Session("username") & "-" & GetUnixTimestamp()
+  End Function
 
-  root.appendChild( _
-    CreateCompletion( _
-      3, _
-      "In Linux, which commands can be used to find files or directories?" _
-    ) _
-  )
+  If Not IsEmpty(Session("username")) Then
+    Set result = xmlDocument.createElement("result")
+    result.text = "ok"
+    root.appendChild(result)
+
+    Dim testId, testIdValue
+    Set testId = xmlDocument.createElement("test-id")
+    testIdValue = GenerateTestId()
+    testId.text = testIdValue
+    Session(testIdValue) = 1
+    root.appendChild(testId)
+
+    ' Construct XML
+    Set questionNode = xmlDocument.createElement("question")
+
+    questionNode.appendChild( _
+      CreateSingleSelection( _
+        1, _
+        "Which command is used to trace the system calls made by a process, and which options would you use to trace a specific process ID (PID) and output the results to a file?", _
+        "<code>strace -p PID -o output.txt</code>", _
+        "<code>strace -c -p PID > output.txt</code>", _
+        "<code>strace -f -p PID | tee output.txt</code>", _
+        "<code>strace -t -p PID > output.txt</code>" _
+      ) _
+    )
+
+    questionNode.appendChild( _
+      CreateMultipleSelection( _
+        2, _
+        "In Linux, how can you check the IP address of network interfaces?", _
+        "<code>ifconfig</code>", _
+        "<code>ip addr show</code>", _
+        "<code>netstat</code>", _
+        "<code>ping</code>" _
+      ) _
+    )
+
+    questionNode.appendChild( _
+      CreateCompletion( _
+        3, _
+        "In Linux, which commands can be used to find files or directories?" _
+      ) _
+    )
+
+    root.appendChild(questionNode)
+  Else
+    Set result = xmlDocument.createElement("result")
+    result.text = "not-logined"
+    root.appendChild(result)
+  End if
 
   Response.Write(xmlDocument.xml)
 %>

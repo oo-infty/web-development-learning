@@ -12,6 +12,8 @@ const questionContainer = document.querySelector(".question-container");
 
 const TOTAL_DURATION_SECONDS = 1800;
 
+let testId;
+
 async function fetchQuestion() {
   try {
     const resp = await fetch("../backend/generate.asp", {
@@ -110,8 +112,18 @@ async function generateQuestion() {
   const parser = new DOMParser();
   const xml = parser.parseFromString(questions, "application/xml");
   const root = xml.querySelector("root");
+  const result = root.querySelector("result").textContent;
 
-  Array.from(root.children).forEach(child => {
+  if (result == "not-logined") {
+    window.alert("You must login first to participate in the test!");
+    location.assign("../login.html");
+    return;
+  }
+
+  testId = root.querySelector("test-id").textContent;
+  const question = root.querySelector("question");
+
+  Array.from(question.children).forEach(child => {
     const question = createQuestion(child);
     questionContainer.appendChild(question);
   });
