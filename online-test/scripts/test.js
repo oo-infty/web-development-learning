@@ -13,6 +13,8 @@ const questionContainer = document.querySelector(".question-container");
 const TOTAL_DURATION_SECONDS = 1800;
 
 let testId;
+let askSubmit = true;
+let intervalId;
 
 async function fetchQuestion() {
   try {
@@ -33,33 +35,6 @@ async function fetchQuestion() {
     location.assign("../index.html");
     return null;
   }
-}
-
-function createQuestion(child) {
-  const section = document.createElement("section");
-  section.setAttribute("class", `question-entry ${child.tagName}`);
-  section.setAttribute("id", `question-${child.querySelector("id").textContent}`);
-
-  const h1 = document.createElement("h1");
-  h1.setAttribute("class", "question-number");
-  section.appendChild(h1);
-
-  const p = document.createElement("p");
-  p.textContent = child.querySelector("content").textContent;
-  section.appendChild(p);
-
-  if (child.tagName == "single-selection") {
-    const answer = createSelectionAnswer(child, "radio");
-    section.appendChild(answer);
-  } else if (child.tagName == "multiple-selection") {
-    const answer = createSelectionAnswer(child, "checkbox");
-    section.appendChild(answer);
-  } else {
-    const answer = createCompletionAnswer(child);
-    section.appendChild(answer);
-  }
-
-  return section;
 }
 
 function createSelectionAnswer(child, componentType) {
@@ -102,6 +77,33 @@ function createCompletionAnswer(child) {
   return inputBox;
 }
 
+function createQuestion(child) {
+  const section = document.createElement("section");
+  section.setAttribute("class", `question-entry ${child.tagName}`);
+  section.setAttribute("id", `question-${child.querySelector("id").textContent}`);
+
+  const h1 = document.createElement("h1");
+  h1.setAttribute("class", "question-number");
+  section.appendChild(h1);
+
+  const p = document.createElement("p");
+  p.textContent = child.querySelector("content").textContent;
+  section.appendChild(p);
+
+  if (child.tagName == "single-selection") {
+    const answer = createSelectionAnswer(child, "radio");
+    section.appendChild(answer);
+  } else if (child.tagName == "multiple-selection") {
+    const answer = createSelectionAnswer(child, "checkbox");
+    section.appendChild(answer);
+  } else {
+    const answer = createCompletionAnswer(child);
+    section.appendChild(answer);
+  }
+
+  return section;
+}
+
 async function generateQuestion() {
   const questions = await fetchQuestion();
 
@@ -115,7 +117,7 @@ async function generateQuestion() {
   const result = root.querySelector("result").textContent;
 
   if (result == "not-logined") {
-    window.alert("You must login first to participate in the test!");
+    window.alert("Error: Not logined. You must login first to participate in the test!");
     location.assign("../login.html");
     return;
   }
@@ -169,17 +171,18 @@ function registerNavigation() {
 
 function registerCountdown() {
   const endInstant = Date.now() + TOTAL_DURATION_SECONDS * 1000;
-  let intervalId;
 
   function updateCounddown() {
     const remainingSeconds = Math.floor((endInstant - Date.now()) / 1000);
 
     if (remainingSeconds === 0) {
+      askSubmit = false;
       window.alert("The test is over. All answers will be submitted automatically.")
       questionContainer.requestSubmit();
 
       if (intervalId) {
         clearInterval(intervalId);
+        intervalId = null;
       }
 
       return;
@@ -208,18 +211,96 @@ function registerControlButton() {
   });
 
   buttonTestSubmit.addEventListener("click", (_event) => {
-    const res = window.confirm("Are you sure to submit the answers?");
-
-    if (res) {
-      questionContainer.requestSubmit();
-    }
-  });
+    questionContainer.requestSubmit();
+  })
 
   buttonTestLeave.addEventListener("click", (_event) => {
     const res = window.confirm("Are you sure to quit the test? All answers will be lost!");
 
     if (res) {
-      location.assign("./index.html");
+      location.assign("../index.html");
+    }
+  });
+}
+
+
+function createAnswerForm() {
+  let formData = new FormData();
+  formData.append("test-id", testId);
+
+  for (const question of questionContainer.children) {
+    if (question.classList.contains("single-selection")) {
+      const id = question.id.replace("question-", "");
+      const radio = question.querySelector("input:checked");
+      formData.append(`single-${id}`, (radio ? radio.value : ""));
+    } else if (question.classList.contains("multiple-selection")) {
+      const id = question.id.replace("question-", "");
+      const checkboxs = question.querySelectorAll("input:checked");
+      const answer = Array.from(checkboxs).map((ck) => ck.value).join('');
+      formData.append(`multiple-${id}`, answer);
+    } else if (question.classList.contains("completion")) {
+      const id = question.id.replace("question-", "");
+      const inputbox = question.querySelector("input");
+      formData.append(`completion-${id}`, inputbox.value);
+    }
+  }
+
+  return formData;
+}
+
+function registerFormSubmit() {
+  questionContainer.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const res = !askSubmit || window.confirm("Are you sure to submit the answers?");
+
+    if (res) {
+      try {
+        const formData = createAnswerForm();
+        const encodedData = new URLSearchParams(formData).toString();
+
+        const resp = await fetch("../backend/submit.asp", {
+          method: "POST",
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: encodedData,
+          credentials: "same-origin",
+        });
+
+        if (!resp.ok) {
+          window.alert("Error: Could not submit answers");
+          return;
+        }
+
+        const text = await resp.text();
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(text, "application/xml");
+
+        if (!xml) {
+          window.alert("Error: Could not receive valid response");
+          return;
+        }
+
+        const root = xml.querySelector("root");
+        const result = root.querySelector("result").textContent;
+
+        if (result === "not-logined") {
+          window.alert("Error: Not logined. You must login first to participate in the test!");
+          location.assign("../login.html");
+          return;
+        } else if (result === "test-expired") {
+          window.alert("Error: Test expired. Please refresh the page");
+          return;
+        }
+
+        if (intervalId) {
+          clearInterval(intervalId);
+          intervalId = null;
+        }
+
+        location.assign("../result.html?query=latest");
+      } catch (error) {
+        console.error(error);
+        window.alert("Error: Could not submit answers");
+      }
     }
   });
 }
@@ -231,6 +312,7 @@ async function main() {
   registerNavigation();
   registerCountdown();
   registerControlButton();
+  registerFormSubmit();
 }
 
 main();
