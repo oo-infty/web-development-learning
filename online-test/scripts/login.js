@@ -1,6 +1,7 @@
 const form = document.querySelector("form");
 const inputUsername = form.querySelector("#username");
 const buttonStart = document.querySelector("#button-start");
+const loginMessage = document.querySelector(".login-message");
 
 function registerInputUsername() {
   inputUsername.addEventListener("input", () => {
@@ -18,29 +19,57 @@ function registerInputUsername() {
 }
 
 function registerButtonStart() {
-  buttonStart.addEventListener("click", (event) => {
-    if (!form.reportValidity()) {
-      event.preventDefault();
-      return;
-    }
+  async function submit() {
+    try {
+      const formData = new FormData(form);
+      const encodedData = new URLSearchParams(formData).toString();
 
+      const resp = await fetch("../backend/login.asp", {
+        method: "POST",
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: encodedData,
+        credentials: "same-origin",
+      });
+
+      return resp.ok;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  }
+
+  function greetMessage() {
     const hour = new Date(Date.now()).getHours();
     let greet = "";
 
     if (7 < hour && hour < 12) {
-      greet = "Good morning";
+      greet = "Good morning. ";
     } else if (hour < 18) {
-      greet = "Good afternoon";
+      greet = "Good afternoon. ";
     } else if (hour < 23) {
-      greet = "Good evening";
+      greet = "Good evening. ";
     } else {
-      greet = "It may be too late for you to finish the test.";
+      greet = "";
     }
 
-    const res = window.confirm(`${greet}. The test is about to start. Are you ready?`);
+    return `${greet}You have successfully logined`;
+  }
 
-    if (!res) {
-      event.preventDefault();
+  buttonStart.addEventListener("click", async (event) => {
+    event.preventDefault();
+
+    if (!form.reportValidity()) {
+      return;
+    }
+
+    if (await submit()) {
+      const msg = greetMessage();
+      loginMessage.textContent = msg;
+      loginMessage.setAttribute("class", "login-message login-state-successful");
+      setTimeout(() => location.assign("../index.html"), 3000);
+    } else {
+      loginMessage.textContent = "Failed to login";
+      loginMessage.setAttribute("class", "login-message login-state-failed");
     }
   });
 }

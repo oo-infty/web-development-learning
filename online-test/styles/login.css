@@ -18,6 +18,27 @@ body {
   padding: 0;
 }
 
+.login-message {
+  margin: 0;
+  padding: 0.75rem;
+  border: 1px solid gray;
+  border-radius: 1rem;
+}
+
+.login-state-init {
+  display: none;
+}
+
+.login-state-successful {
+  display: unset;
+  background-color: rgba(73, 230, 70, 0.76);
+}
+
+.login-state-failed {
+  display: unset;
+  background-color: rgb(244, 15, 15);
+}
+
 .login-body form {
   display: flex;
   flex-flow: column;
@@ -30,7 +51,7 @@ body {
   margin: 0;
   padding: 0;
   border: 1px solid gray;
-  border-radius: 0.5rem;
+  border-radius: 1rem;
   background-color: #232323;
 
   display: flex;
