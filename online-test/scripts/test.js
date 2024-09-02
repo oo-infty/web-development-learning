@@ -10,7 +10,7 @@ const buttonTestLeave = document.querySelector(".test-leave button");
 
 const questionContainer = document.querySelector(".question-container");
 
-let remainingSeconds = 1800;
+const TOTAL_DURATION_SECONDS = 1800;
 
 async function fetchQuestion() {
   try {
@@ -156,9 +156,12 @@ function registerNavigation() {
 }
 
 function registerCountdown() {
+  const endInstant = Date.now() + TOTAL_DURATION_SECONDS * 1000;
   let intervalId;
 
   function updateCounddown() {
+    const remainingSeconds = Math.floor((endInstant - Date.now()) / 1000);
+
     if (remainingSeconds === 0) {
       window.alert("The test is over. All answers will be submitted automatically.")
       questionContainer.requestSubmit();
@@ -177,7 +180,6 @@ function registerCountdown() {
     const minutes = Math.floor(remainingSeconds / 60);
     const seconds = remainingSeconds - minutes * 60;
     countdown.textContent = `${padZero(minutes)}:${padZero(seconds)}`;
-    remainingSeconds -= 1;
   }
 
   intervalId = setInterval(updateCounddown, 1000);
