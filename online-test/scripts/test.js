@@ -12,6 +12,111 @@ const questionContainer = document.querySelector(".question-container");
 
 let remainingSeconds = 1800;
 
+async function fetchQuestion() {
+  try {
+    const resp = await fetch("../backend/generate.asp", {
+      method: "GET",
+      credentials: "same-origin",
+    });
+
+    if (resp.ok) {
+      const text = await resp.text();
+      return text;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error(`Error: Could not fetch questions from ${url}: ${error}`)
+    window.alert("Error: Could not fetch any question. Test aborted");
+    location.assign("../index.html");
+    return null;
+  }
+}
+
+function createQuestion(child) {
+  const section = document.createElement("section");
+  section.setAttribute("class", `question-entry ${child.tagName}`);
+  section.setAttribute("id", `question-${child.querySelector("id").textContent}`);
+
+  const h1 = document.createElement("h1");
+  h1.setAttribute("class", "question-number");
+  section.appendChild(h1);
+
+  const p = document.createElement("p");
+  p.textContent = child.querySelector("content").textContent;
+  section.appendChild(p);
+
+  if (child.tagName == "single-selection") {
+    const answer = createSelectionAnswer(child, "radio");
+    section.appendChild(answer);
+  } else if (child.tagName == "multiple-selection") {
+    const answer = createSelectionAnswer(child, "checkbox");
+    section.appendChild(answer);
+  } else {
+    const answer = createCompletionAnswer(child);
+    section.appendChild(answer);
+  }
+
+  return section;
+}
+
+function createSelectionAnswer(child, componentType) {
+  const ul = document.createElement("ul");
+  ul.className = "question-answer selection-list";
+
+  Array.from(child.getElementsByTagName("option")).forEach((option, index) => {
+    const li = document.createElement("li");
+
+    const id = child.querySelector("id").textContent;
+    const input = document.createElement("input");
+    input.setAttribute("type", componentType);
+    input.setAttribute("id", `option-${id}-${String.fromCharCode(97 + index)}`);
+    input.setAttribute("name", `question-${id}`);
+    input.setAttribute("value", String.fromCharCode(97 + index));
+    li.appendChild(input);
+
+    const label = document.createElement("label");
+    label.setAttribute("for", input.getAttribute("id"));
+    label.innerHTML = option.textContent;
+    li.appendChild(label);
+
+    ul.appendChild(li);
+  });
+
+  return ul;
+}
+
+function createCompletionAnswer(child) {
+  const inputBox = document.createElement("div");
+  inputBox.className = "question-answer input-box";
+
+  const id = child.querySelector("id").textContent;
+  const input = document.createElement("input");
+  input.setAttribute("type", "input");
+  input.setAttribute("id", `completion-${id}`);
+  input.setAttribute("name", `completion-${id}`);
+
+  inputBox.appendChild(input);
+  return inputBox;
+}
+
+async function generateQuestion() {
+  const questions = await fetchQuestion();
+
+  if (!questions) {
+    return;
+  }
+
+  const parser = new DOMParser();
+  const xml = parser.parseFromString(questions, "application/xml");
+  const root = xml.querySelector("root");
+
+  Array.from(root.children).forEach(child => {
+    const question = createQuestion(child);
+    questionContainer.appendChild(question);
+  });
+}
+
 function generateQuestionNavigation() {
   let num = 0;
 
@@ -105,7 +210,8 @@ function registerControlButton() {
   });
 }
 
-function main() {
+async function main() {
+  await generateQuestion();
   generateQuestionNavigation();
 
   registerNavigation();
