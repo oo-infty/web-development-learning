@@ -24,7 +24,7 @@ function registerButtonStart() {
       const formData = new FormData(form);
       const encodedData = new URLSearchParams(formData).toString();
 
-      const resp = await fetch("../backend/login.asp", {
+      const resp = await fetch("TODO", {
         method: "POST",
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: encodedData,

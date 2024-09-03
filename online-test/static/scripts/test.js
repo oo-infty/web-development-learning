@@ -18,7 +18,7 @@ let intervalId;
 
 async function fetchQuestion() {
   try {
-    const resp = await fetch("../backend/generate.asp", {
+    const resp = await fetch("TODO", {
       method: "GET",
       credentials: "same-origin",
     });
@@ -258,7 +258,7 @@ function registerFormSubmit() {
         const formData = createAnswerForm();
         const encodedData = new URLSearchParams(formData).toString();
 
-        const resp = await fetch("../backend/submit.asp", {
+        const resp = await fetch("TODO", {
           method: "POST",
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: encodedData,
