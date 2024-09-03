@@ -7,13 +7,16 @@ insert_final_newline = true
 trim_trailing_whitespace = true
 indent_style = space
 
-[*.html]
+[*.nix]
 indent_size = 2
 
-[*.css]
+[*.rs]
+indent_size = 4
+
+[{*.json,*.yml,*.yaml,*.toml}]
 indent_size = 2
 
-[*.js]
+[{*.html,*.css,*.js}]
 indent_size = 2
 
 [*.md]
