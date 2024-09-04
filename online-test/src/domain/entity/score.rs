@@ -5,7 +5,7 @@ pub struct Score(f32);
 
 impl Score {
     pub fn try_new(score: f32) -> Result<Self, TryNewScoreError> {
-        ensure!(0f32 <= score && score <= 100f32, InvalidSnafu);
+        ensure!((0f32..=100f32).contains(&score), InvalidSnafu);
         Ok(Self(score))
     }
 

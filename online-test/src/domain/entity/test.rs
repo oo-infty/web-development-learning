@@ -30,7 +30,7 @@ impl Test {
             .questions
             .iter()
             .filter_map(|q| submission.answers.get(&q.id()).map(|a| (q, a)))
-            .filter(|(q, a)| q.check(&a))
+            .filter(|(q, a)| q.check(a))
             .count();
 
         Score::try_new(100f32 * correct as f32 / self.questions.len() as f32)

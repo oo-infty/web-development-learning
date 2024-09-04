@@ -71,12 +71,9 @@ pub trait Session: Debug + Sized + Send + 'static {
                 None => {}
             }
 
-            match expire {
-                Some(_) => {
-                    self.cancel_sub_sessions().await;
-                    break;
-                }
-                None => {}
+            if expire.is_some() {
+                self.cancel_sub_sessions().await;
+                break;
             }
         }
 
@@ -90,7 +87,7 @@ pub trait Session: Debug + Sized + Send + 'static {
         drop(self.base_mut().sub_reporter.take());
         let mut running = 0usize;
 
-        for (_, sub) in &mut self.base_mut().sub_sessions {
+        for sub in self.base_mut().sub_sessions.values_mut() {
             let res = sub.send(Command::Cancel).await;
             running += res.map_or(0, |_| 1);
         }
@@ -108,10 +105,7 @@ pub trait Session: Debug + Sized + Send + 'static {
     where
         F: FnOnce(SessionBase<Self::SubSession>) -> Self::SubSession + Send + 'static,
     {
-        let Some(reporter) = self.base().sub_reporter.clone() else {
-            return None;
-        };
-
+        let reporter = self.base().sub_reporter.clone()?;
         let id = self.base().id_allocator.allocate();
         let (command_tx, command_rx) = channel(4);
         let (sub_reporter, sub_report) = channel(4);

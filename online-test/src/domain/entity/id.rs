@@ -20,6 +20,12 @@ pub struct SequentialIdAllocator {
     now: AtomicUsize,
 }
 
+impl Default for SequentialIdAllocator {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl SequentialIdAllocator {
     pub fn new() -> Self {
         SequentialIdAllocator {
