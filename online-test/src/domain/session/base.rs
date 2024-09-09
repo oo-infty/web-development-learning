@@ -102,20 +102,19 @@ pub trait Session: Debug + Sized + Send + 'static {
         .await;
     }
 
-    fn spawn<F>(&mut self, construtor: F) -> Option<Id>
+    async fn spawn<F>(&mut self, construtor: F) -> Option<Id>
     where
         F: FnOnce(SessionBase<Self::SubSession>) -> Self::SubSession + Send + 'static,
     {
         let id_allocator = Arc::clone(&self.base().id_allocator);
         let (commander, command) = channel(4);
         let reporter = self.base().sub_reporter.clone()?;
-        let mut sub_base = SessionBase::new(id_allocator, command, reporter);
+        let sub_base = SessionBase::new(id_allocator, command, reporter).await;
 
         let id = sub_base.id;
         self.base_mut().sub_sessions.insert(id, commander);
 
         tokio::spawn(async move {
-            sub_base.expire_timer.tick().await;
             let mut sub = construtor(sub_base);
             sub.run().await;
         });
@@ -185,13 +184,15 @@ pub struct SessionBase<S: Session> {
 }
 
 impl<S: Session> SessionBase<S> {
-    pub fn new(
+    pub async fn new(
         id_allocator: Arc<SequentialIdAllocator>,
         command: Receiver<Command<S>>,
         reporter: Sender<Report>,
     ) -> Self {
         let id = id_allocator.allocate();
         let (sub_reporter, sub_report) = channel(4);
+        let mut expire_timer = interval(S::SESSION_EXPIRE_TIMEOUT);
+        expire_timer.tick().await;
 
         SessionBase {
             id,
@@ -201,7 +202,7 @@ impl<S: Session> SessionBase<S> {
             reporter,
             sub_report,
             sub_reporter: Some(sub_reporter),
-            expire_timer: interval(S::SESSION_EXPIRE_TIMEOUT),
+            expire_timer,
             exit_token: false,
         }
     }
@@ -299,13 +300,12 @@ mod tests {
             let id_allocator = Arc::new(SequentialIdAllocator::new());
             let (commander, command) = channel(4);
             let (reporter, report) = channel(4);
-            let mut base = SessionBase::new(id_allocator, command, reporter);
+            let base = SessionBase::new(id_allocator, command, reporter).await;
 
             let set = Arc::new(Mutex::new(BTreeSet::new()));
             let set2 = Arc::clone(&set);
 
             tokio::spawn(async move {
-                base.expire_timer.tick().await;
                 let mut session = SimpleSession { base, set: set2 };
                 session.run().await;
             });
@@ -340,7 +340,9 @@ mod tests {
                 }
                 Self::ExtraCommand::Spawn => {
                     let set = Arc::clone(&self.set);
-                    self.spawn(|base| SimpleSession { base, set }).unwrap();
+                    self.spawn(|base| SimpleSession { base, set })
+                        .await
+                        .unwrap();
                 }
             };
         }

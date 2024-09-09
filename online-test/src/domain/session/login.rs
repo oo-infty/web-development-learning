@@ -55,6 +55,7 @@ impl LoginSession {
         let score_repository = Arc::clone(&self.score_repository);
         let id = self
             .spawn(|base| TestSession::new(base, question_repository, score_repository))
+            .await
             .unwrap_or_else(|| unreachable!("A TestSession should start"));
 
         let commander = self
@@ -243,7 +244,7 @@ mod tests {
     #[tokio::test(start_paused = true)]
     async fn login_session_start_submit() {
         let (question_repository, score_repository, _) = new_repository();
-        let (mut session, _, _) = new_login_session(question_repository, score_repository);
+        let (mut session, _, _) = new_login_session(question_repository, score_repository).await;
 
         let user = User::try_new("user").unwrap();
         session.handle_login(user).unwrap();
@@ -265,7 +266,7 @@ mod tests {
     #[tokio::test(start_paused = true)]
     async fn login_session_query() {
         let (question_repository, score_repository, _) = new_repository();
-        let (mut session, _, _) = new_login_session(question_repository, score_repository);
+        let (mut session, _, _) = new_login_session(question_repository, score_repository).await;
 
         let user = User::try_new("user").unwrap();
         session.handle_login(user).unwrap();
@@ -301,7 +302,7 @@ mod tests {
     #[tokio::test(start_paused = true)]
     async fn login_session_already_logged_in() {
         let (question_repository, score_repository, _) = new_repository();
-        let (mut session, _, _) = new_login_session(question_repository, score_repository);
+        let (mut session, _, _) = new_login_session(question_repository, score_repository).await;
 
         let user = User::try_new("user").unwrap();
         session.handle_login(user).unwrap();
@@ -321,7 +322,8 @@ mod tests {
             let (mut session, _, _) = new_login_session(
                 Arc::clone(&question_repository),
                 Arc::clone(&score_repository),
-            );
+            )
+            .await;
 
             assert!(matches!(
                 session.handle_start().await,
@@ -333,7 +335,8 @@ mod tests {
             let (mut session, _, _) = new_login_session(
                 Arc::clone(&question_repository),
                 Arc::clone(&score_repository),
-            );
+            )
+            .await;
 
             assert!(matches!(
                 session.handle_submit(1.into(), new_submission()).await,
@@ -345,7 +348,8 @@ mod tests {
             let (mut session, _, _) = new_login_session(
                 Arc::clone(&question_repository),
                 Arc::clone(&score_repository),
-            );
+            )
+            .await;
 
             assert!(matches!(
                 session.handle_query(QueryKind::Best).await,
@@ -357,7 +361,8 @@ mod tests {
             let (mut session, _, _) = new_login_session(
                 Arc::clone(&question_repository),
                 Arc::clone(&score_repository),
-            );
+            )
+            .await;
 
             assert!(matches!(
                 session.handle_query_all().await,
@@ -369,7 +374,7 @@ mod tests {
     #[tokio::test(start_paused = true)]
     async fn login_session_session_not_found() {
         let (question_repository, score_repository, _) = new_repository();
-        let (mut session, _, _) = new_login_session(question_repository, score_repository);
+        let (mut session, _, _) = new_login_session(question_repository, score_repository).await;
 
         let user = User::try_new("user").unwrap();
         session.handle_login(user).unwrap();
@@ -382,7 +387,7 @@ mod tests {
         ));
     }
 
-    fn new_login_session(
+    async fn new_login_session(
         question_repository: Arc<dyn QuestionRepository>,
         score_repository: Arc<dyn ScoreRepository>,
     ) -> (
@@ -393,7 +398,7 @@ mod tests {
         let id_allocator = Arc::new(SequentialIdAllocator::new());
         let (commander, command) = mpsc::channel(4);
         let (reporter, report) = mpsc::channel(4);
-        let base = SessionBase::new(id_allocator, command, reporter);
+        let base = SessionBase::new(id_allocator, command, reporter).await;
         let session = LoginSession::new(base, question_repository, score_repository);
         (session, commander, report)
     }
