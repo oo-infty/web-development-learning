@@ -1,3 +1,5 @@
+use std::fmt::{Display, Formatter, Result as FmtResult};
+
 use snafu::prelude::*;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -23,6 +25,12 @@ impl User {
 impl From<User> for String {
     fn from(value: User) -> Self {
         value.0
+    }
+}
+
+impl Display for User {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        write!(f, "{}", self.0)
     }
 }
 

@@ -1,6 +1,6 @@
 use snafu::prelude::*;
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Score(f32);
 
 impl Score {

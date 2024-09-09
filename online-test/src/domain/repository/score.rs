@@ -1,14 +1,16 @@
 use std::error::Error;
+use std::fmt::Debug;
 
+use async_trait::async_trait;
 use snafu::prelude::*;
 use tokio::time::{Duration, Instant};
 
 use crate::domain::entity::score::Score;
 use crate::domain::entity::user::User;
 
-#[async_trait::async_trait]
 #[cfg_attr(test, mockall::automock)]
-pub trait ScoreRepository: Send + Sync + 'static {
+#[async_trait]
+pub trait ScoreRepository: Debug + Send + Sync + 'static {
     async fn insert(
         &self,
         user: User,
@@ -32,8 +34,8 @@ pub enum ScoreRepositoryError {
     #[snafu(whatever, display("Unknown error: {message}"))]
     Unknown {
         message: String,
-        #[snafu(source(from(Box<dyn Error>, Some)))]
-        source: Option<Box<dyn Error>>,
+        #[snafu(source(from(Box<dyn Error + Send>, Some)))]
+        source: Option<Box<dyn Error + Send>>,
     },
 }
 

@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::convert::Infallible;
 use std::fmt::Debug;
 use std::sync::Arc;
 
@@ -105,24 +106,13 @@ pub trait Session: Debug + Sized + Send + 'static {
     where
         F: FnOnce(SessionBase<Self::SubSession>) -> Self::SubSession + Send + 'static,
     {
+        let id_allocator = Arc::clone(&self.base().id_allocator);
+        let (commander, command) = channel(4);
         let reporter = self.base().sub_reporter.clone()?;
-        let id = self.base().id_allocator.allocate();
-        let (command_tx, command_rx) = channel(4);
-        let (sub_reporter, sub_report) = channel(4);
+        let mut sub_base = SessionBase::new(id_allocator, command, reporter);
 
-        let mut sub_base = SessionBase {
-            id,
-            id_allocator: Arc::clone(&self.base().id_allocator),
-            command: command_rx,
-            sub_sessions: HashMap::new(),
-            reporter,
-            sub_report,
-            sub_reporter: Some(sub_reporter),
-            expire_timer: interval(Self::SESSION_EXPIRE_TIMEOUT),
-            exit_token: false,
-        };
-
-        self.base_mut().sub_sessions.insert(id, command_tx);
+        let id = sub_base.id;
+        self.base_mut().sub_sessions.insert(id, commander);
 
         tokio::spawn(async move {
             sub_base.expire_timer.tick().await;
@@ -135,6 +125,38 @@ pub trait Session: Debug + Sized + Send + 'static {
 
     fn request_exit(&mut self) {
         self.base_mut().exit_token = true;
+    }
+
+    fn reset_expire(&mut self) {
+        self.base_mut().expire_timer.reset();
+    }
+}
+
+#[derive(Debug)]
+pub enum NoneSession {}
+
+#[async_trait::async_trait]
+impl Session for NoneSession {
+    const SESSION_EXPIRE_TIMEOUT: Duration = Duration::from_secs(0);
+    const CANCEL_AWAIT_TIMEOUT: Duration = Duration::from_secs(0);
+
+    type ExtraCommand = Infallible;
+    type SubSession = NoneSession;
+
+    fn base(&self) -> &SessionBase<Self> {
+        unreachable!()
+    }
+
+    fn base_mut(&mut self) -> &mut SessionBase<Self> {
+        unreachable!()
+    }
+
+    async fn handle(&mut self, _command: Self::ExtraCommand) {
+        unreachable!()
+    }
+
+    async fn finalize(&mut self) {
+        unreachable!()
     }
 }
 
@@ -162,6 +184,29 @@ pub struct SessionBase<S: Session> {
     pub(super) exit_token: bool,
 }
 
+impl<S: Session> SessionBase<S> {
+    pub fn new(
+        id_allocator: Arc<SequentialIdAllocator>,
+        command: Receiver<Command<S>>,
+        reporter: Sender<Report>,
+    ) -> Self {
+        let id = id_allocator.allocate();
+        let (sub_reporter, sub_report) = channel(4);
+
+        SessionBase {
+            id,
+            id_allocator,
+            command,
+            sub_sessions: HashMap::new(),
+            reporter,
+            sub_report,
+            sub_reporter: Some(sub_reporter),
+            expire_timer: interval(S::SESSION_EXPIRE_TIMEOUT),
+            exit_token: false,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use std::collections::BTreeSet;
@@ -169,7 +214,7 @@ mod tests {
 
     use super::*;
 
-    #[tokio::test]
+    #[tokio::test(start_paused = true)]
     async fn session_handle() {
         let (commander, _, set) = SimpleSession::root().await;
         commander
@@ -196,7 +241,7 @@ mod tests {
         assert_eq!(*set.lock().unwrap(), vec![0, 1, 2].into_iter().collect());
     }
 
-    #[tokio::test]
+    #[tokio::test(start_paused = true)]
     async fn session_cancel() {
         let (commander, mut report, set) = SimpleSession::root().await;
         commander
@@ -229,7 +274,7 @@ mod tests {
         ));
     }
 
-    #[tokio::test]
+    #[tokio::test(start_paused = true)]
     async fn session_expired() {
         let (_commander, mut report, _set) = SimpleSession::root().await;
         tokio::time::sleep(Duration::from_millis(110)).await;
@@ -252,22 +297,9 @@ mod tests {
             Arc<Mutex<BTreeSet<usize>>>,
         ) {
             let id_allocator = Arc::new(SequentialIdAllocator::new());
-            let id = id_allocator.allocate();
             let (commander, command) = channel(4);
             let (reporter, report) = channel(4);
-            let (sub_reporter, sub_report) = channel(4);
-
-            let mut base = SessionBase {
-                id,
-                id_allocator,
-                command,
-                sub_sessions: HashMap::new(),
-                reporter,
-                sub_report,
-                sub_reporter: Some(sub_reporter),
-                expire_timer: interval(Self::SESSION_EXPIRE_TIMEOUT),
-                exit_token: false,
-            };
+            let mut base = SessionBase::new(id_allocator, command, reporter);
 
             let set = Arc::new(Mutex::new(BTreeSet::new()));
             let set2 = Arc::clone(&set);

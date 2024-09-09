@@ -1,13 +1,16 @@
 use std::error::Error;
+use std::fmt::Debug;
 
+use async_trait::async_trait;
 use snafu::prelude::*;
 
 use crate::domain::entity::answer::TryNewAnswerError;
+use crate::domain::entity::id::Id;
 use crate::domain::entity::question::{Question, TryNewQuestionError};
 
-#[async_trait::async_trait]
 #[cfg_attr(test, mockall::automock)]
-pub trait QuestionRepository: Send + Sync + 'static {
+#[async_trait]
+pub trait QuestionRepository: Debug + Send + Sync + 'static {
     async fn insert_single_selection(
         &self,
         content: String,
@@ -32,6 +35,11 @@ pub trait QuestionRepository: Send + Sync + 'static {
         &self,
         select_count: SelectCount,
     ) -> Result<Vec<Question>, QuestionRepositoryError>;
+
+    async fn select_questions_by_id(
+        &self,
+        id: Vec<Id>,
+    ) -> Result<Vec<Question>, QuestionRepositoryError>;
 }
 
 #[derive(Debug, Snafu)]
@@ -47,17 +55,19 @@ pub enum QuestionRepositoryError {
         expected: usize,
         total: usize,
     },
+    #[snafu(display("Could not find question with ID {id}"))]
+    NotFound { id: Id },
     #[snafu(whatever, display("Unknown error: {message}"))]
     Unknown {
         message: String,
-        #[snafu(source(from(Box<dyn Error>, Some)))]
-        source: Option<Box<dyn Error>>,
+        #[snafu(source(from(Box<dyn Error + Send>, Some)))]
+        source: Option<Box<dyn Error + Send>>,
     },
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SelectCount {
-    single_selection: usize,
-    multiple_selection: usize,
-    completion: usize,
+    pub single_selection: usize,
+    pub multiple_selection: usize,
+    pub completion: usize,
 }
