@@ -18,7 +18,7 @@ let intervalId;
 
 async function fetchQuestion() {
   try {
-    const resp = await fetch("TODO", {
+    const resp = await fetch("../api/start", {
       method: "GET",
       credentials: "same-origin",
     });
@@ -41,10 +41,10 @@ function createSelectionAnswer(child, componentType) {
   const ul = document.createElement("ul");
   ul.className = "question-answer selection-list";
 
-  Array.from(child.getElementsByTagName("option")).forEach((option, index) => {
+  Array.from(child.options).forEach((option, index) => {
     const li = document.createElement("li");
 
-    const id = child.querySelector("id").textContent;
+    const id = child.id;
     const input = document.createElement("input");
     input.setAttribute("type", componentType);
     input.setAttribute("id", `option-${id}-${String.fromCharCode(97 + index)}`);
@@ -54,7 +54,7 @@ function createSelectionAnswer(child, componentType) {
 
     const label = document.createElement("label");
     label.setAttribute("for", input.getAttribute("id"));
-    label.innerHTML = option.textContent;
+    label.innerHTML = option;
     li.appendChild(label);
 
     ul.appendChild(li);
@@ -67,7 +67,7 @@ function createCompletionAnswer(child) {
   const inputBox = document.createElement("div");
   inputBox.className = "question-answer input-box";
 
-  const id = child.querySelector("id").textContent;
+  const id = child.id;
   const input = document.createElement("input");
   input.setAttribute("type", "input");
   input.setAttribute("id", `completion-${id}`);
@@ -78,22 +78,32 @@ function createCompletionAnswer(child) {
 }
 
 function createQuestion(child) {
+  let className;
+
+  if (child.type == "SingleSelection") {
+    className = "single-selection"
+  } else if (child.type == "MultipleSelection") {
+    className = "multiple-selection"
+  } else {
+    className = "completion"
+  }
+
   const section = document.createElement("section");
-  section.setAttribute("class", `question-entry ${child.tagName}`);
-  section.setAttribute("id", `question-${child.querySelector("id").textContent}`);
+  section.setAttribute("class", `question-entry ${className}`);
+  section.setAttribute("id", `question-${child.id}`);
 
   const h1 = document.createElement("h1");
   h1.setAttribute("class", "question-number");
   section.appendChild(h1);
 
   const p = document.createElement("p");
-  p.textContent = child.querySelector("content").textContent;
+  p.textContent = child.content;
   section.appendChild(p);
 
-  if (child.tagName == "single-selection") {
+  if (className == "single-selection") {
     const answer = createSelectionAnswer(child, "radio");
     section.appendChild(answer);
-  } else if (child.tagName == "multiple-selection") {
+  } else if (className == "multiple-selection") {
     const answer = createSelectionAnswer(child, "checkbox");
     section.appendChild(answer);
   } else {
@@ -105,27 +115,25 @@ function createQuestion(child) {
 }
 
 async function generateQuestion() {
-  const questions = await fetchQuestion();
+  const text = await fetchQuestion();
 
-  if (!questions) {
+  if (!text) {
     return;
   }
 
-  const parser = new DOMParser();
-  const xml = parser.parseFromString(questions, "application/xml");
-  const root = xml.querySelector("root");
-  const result = root.querySelector("result").textContent;
+  const json = JSON.parse(text);
+  const test = json.test;
 
-  if (result == "not-logined") {
-    window.alert("Error: Not logined. You must login first to participate in the test!");
-    location.assign("../login.html");
-    return;
-  }
+  // if (result == "not-logined") {
+  //   window.alert("Error: Not logined. You must login first to participate in the test!");
+  //   location.assign("../login.html");
+  //   return;
+  // }
 
-  testId = root.querySelector("test-id").textContent;
-  const question = root.querySelector("question");
+  testId = test.id;
+  const questions = test.questions;
 
-  Array.from(question.children).forEach(child => {
+  Array.from(questions).forEach(child => {
     const question = createQuestion(child);
     questionContainer.appendChild(question);
   });

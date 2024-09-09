@@ -1,11 +1,13 @@
 use std::collections::HashMap;
 
+use serde::Serialize;
+
 use crate::domain::entity::answer::{Answer, SubmissionSource};
 use crate::domain::entity::id::Id;
 use crate::domain::entity::question::{AbstractQuestion, Question};
 use crate::domain::entity::score::Score;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct Test {
     id: Id,
     questions: Vec<Question>,

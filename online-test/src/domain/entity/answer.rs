@@ -1,3 +1,4 @@
+use serde::Serialize;
 use snafu::prelude::*;
 
 pub trait AnswerSourceMarker: Clone + Copy + PartialEq + Eq + Default {}
@@ -65,9 +66,10 @@ impl Answer<SubmissionSource> {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct SingleSelectionAnswer<Src: AnswerSourceMarker> {
     value: u32,
+    #[serde(skip)]
     source: Src,
 }
 
@@ -105,9 +107,10 @@ impl SingleSelectionAnswer<SubmissionSource> {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct MultipleSelectionAnswer<Src: AnswerSourceMarker> {
     value: Vec<u32>,
+    #[serde(skip)]
     source: Src,
 }
 
@@ -161,9 +164,10 @@ impl MultipleSelectionAnswer<SubmissionSource> {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct CompletionAnswer<Src: AnswerSourceMarker> {
     value: String,
+    #[serde(skip)]
     source: Src,
 }
 

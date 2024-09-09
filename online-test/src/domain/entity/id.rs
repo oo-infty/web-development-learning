@@ -1,7 +1,9 @@
 use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::sync::atomic::{AtomicUsize, Ordering};
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+use serde::Serialize;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize)]
 pub struct Id(usize);
 
 impl Id {

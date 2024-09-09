@@ -1,3 +1,4 @@
+use serde::Serialize;
 use snafu::prelude::*;
 
 use crate::domain::entity::answer::{
@@ -16,18 +17,20 @@ pub trait AbstractQuestion {
 }
 
 #[enum_dispatch::enum_dispatch(AbstractQuestion)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+#[serde(tag = "type")]
 pub enum Question {
     SingleSelection(SingleSelectionQuestion),
     MultipleSelection(MultipleSelectionQuestion),
     Completion(CompletionQuestion),
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct SingleSelectionQuestion {
     id: Id,
     content: String,
     options: Vec<String>,
+    #[serde(flatten)]
     answer: SingleSelectionAnswer<StandardSource>,
 }
 
@@ -69,11 +72,12 @@ impl AbstractQuestion for SingleSelectionQuestion {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct MultipleSelectionQuestion {
     id: Id,
     content: String,
     options: Vec<String>,
+    #[serde(flatten)]
     answer: MultipleSelectionAnswer<StandardSource>,
 }
 
@@ -115,10 +119,11 @@ impl AbstractQuestion for MultipleSelectionQuestion {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct CompletionQuestion {
     id: Id,
     content: String,
+    #[serde(flatten)]
     answer: CompletionAnswer<StandardSource>,
 }
 
