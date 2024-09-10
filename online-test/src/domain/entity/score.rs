@@ -1,6 +1,7 @@
+use serde::Serialize;
 use snafu::prelude::*;
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize)]
 pub struct Score(f32);
 
 impl Score {

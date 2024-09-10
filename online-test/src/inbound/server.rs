@@ -32,6 +32,7 @@ impl Server {
             .route("/api/login", post(super::handler::login::handle_login))
             .route("/api/start", post(super::handler::start::handle_start))
             .route("/api/submit", post(super::handler::submit::handle_submit))
+            .route("/api/query", post(super::handler::query::handle_query))
             .with_state(self.core);
 
         axum::serve(self.listener, router.into_make_service())

@@ -1,17 +1,47 @@
 const demonstration = document.querySelector(".result-demonstration");
 
-function generateDemonstration() {
-  const scoreNode = document.querySelector("#result-score");
-  const score = Number(scoreNode.textContent);
-  demonstration.removeChild(scoreNode);
+async function fetchQueryResult() {
+  const params = new URLSearchParams(window.location.search);
+  const value = params.get("query")
+  const request = {
+    login_id: 1,
+    kind: (value ? value : "best"),
+  };
 
-  const minutesNode = document.querySelector("#result-minutes");
-  const min = Number(minutesNode.textContent);
-  demonstration.removeChild(minutesNode);
+  try {
+    const resp = await fetch("../api/query", {
+      method: "POST",
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request),
+      credentials: "same-origin",
+    });
 
-  const secondsNode = document.querySelector("#result-seconds");
-  const sec = Number(secondsNode.textContent);
-  demonstration.removeChild(secondsNode);
+    const text = await resp.text();
+
+    if (!resp.ok){
+
+      if (text.search("Could not serve without logging in") != -1) {
+        window.alert("Error: Not logined. You must login first to query result!");
+        location.assign("../login.html");
+      } else {
+        window.alert(`Internal Server Error: ${text}`);
+        location.assign("../login.html");
+      }
+      return null;
+    }
+
+    return JSON.parse(text);
+  } catch (err) {
+    window.alert("Error: Could not query result");
+    return null;
+  }
+}
+
+async function generateDemonstration() {
+  const res = await fetchQueryResult();
+  const score = res.result[0].score;
+  const min = Math.floor(res.result[0].duration / 60);
+  const sec = res.result[0].duration % 60;
 
   const paraTime = demonstration.querySelector("#card-time p:last-child");
   paraTime.textContent = (sec !== 0 ? `${min} min ${sec} s` : `${min} min`);

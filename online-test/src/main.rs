@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use chrono::Utc;
 use online_test::domain::entity::answer::{
     CompletionAnswer, MultipleSelectionAnswer, SingleSelectionAnswer, StandardSource,
 };
@@ -165,14 +166,26 @@ impl ScoreRepository for Sr {
     }
 
     async fn query_all_sorted(&self, user: &User) -> Result<Vec<Record>, ScoreRepositoryError> {
-        todo!()
+        Ok(vec![Record {
+            score: Score::try_new(100f32).unwrap(),
+            end_time: Utc::now(),
+            duration: Duration::from_secs(630),
+        }])
     }
 
     async fn query_best(&self, user: &User) -> Result<Record, ScoreRepositoryError> {
-        todo!()
+        Ok(Record {
+            score: Score::try_new(100f32).unwrap(),
+            end_time: Utc::now(),
+            duration: Duration::from_secs(630),
+        })
     }
 
     async fn query_latest(&self, user: &User) -> Result<Record, ScoreRepositoryError> {
-        todo!()
+        Ok(Record {
+            score: Score::try_new(100f32).unwrap(),
+            end_time: Utc::now(),
+            duration: Duration::from_secs(630),
+        })
     }
 }

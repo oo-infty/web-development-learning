@@ -2,6 +2,7 @@ use std::error::Error;
 use std::fmt::Debug;
 
 use async_trait::async_trait;
+use chrono::{DateTime, Utc};
 use snafu::prelude::*;
 use tokio::time::{Duration, Instant};
 
@@ -42,6 +43,6 @@ pub enum ScoreRepositoryError {
 #[derive(Debug, Clone, PartialEq)]
 pub struct Record {
     pub score: Score,
-    pub end_time: Instant,
+    pub end_time: DateTime<Utc>,
     pub duration: Duration,
 }
