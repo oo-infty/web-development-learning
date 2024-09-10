@@ -1,10 +1,18 @@
 const demonstration = document.querySelector(".result-demonstration");
 
 async function fetchQueryResult() {
+  const loginId = sessionStorage.getItem("loginId");
+
+  if (!loginId) {
+    window.alert("Error: Not logined. You must login first to participate in the test!");
+    location.assign("../login.html");
+    return;
+  }
+
   const params = new URLSearchParams(window.location.search);
   const value = params.get("query")
   const request = {
-    login_id: 1,
+    login_id: Number(loginId),
     kind: (value ? value : "best"),
   };
 
@@ -18,7 +26,7 @@ async function fetchQueryResult() {
 
     const text = await resp.text();
 
-    if (!resp.ok){
+    if (!resp.ok) {
 
       if (text.search("Could not serve without logging in") != -1) {
         window.alert("Error: Not logined. You must login first to query result!");

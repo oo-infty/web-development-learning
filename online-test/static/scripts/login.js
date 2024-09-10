@@ -34,9 +34,15 @@ function registerButtonStart() {
 
       if (!resp.ok) {
         window.alert(`Internal Server Error: ${await resp.text()}`)
+        return false;
       }
 
-      return resp.ok;
+      const text = await resp.text();
+      const json = JSON.parse(text);
+      const loginId = json.login_id;
+      sessionStorage.setItem("loginId", loginId);
+
+      return true;
     } catch (error) {
       console.error(error);
       return false;

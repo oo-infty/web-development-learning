@@ -18,8 +18,16 @@ let intervalId;
 
 async function fetchQuestion() {
   try {
+    const loginId = sessionStorage.getItem("loginId");
+
+    if (!loginId) {
+      window.alert("Error: Not logined. You must login first to participate in the test!");
+      location.assign("../login.html");
+      return;
+    }
+
     const req = {
-      login_id: 1,
+      login_id: Number(loginId),
     };
 
     const resp = await fetch("../api/start", {
@@ -269,8 +277,16 @@ function createSubmissionJson() {
     }
   }
 
+  const loginId = sessionStorage.getItem("loginId");
+
+  if (!loginId) {
+    window.alert("Error: Not logined. You must login first to participate in the test!");
+    location.assign("../login.html");
+    return;
+  }
+
   return JSON.stringify({
-    login_id: 1,
+    login_id: Number(loginId),
     test_id: testId,
     answers: answers,
   });
@@ -292,7 +308,7 @@ function registerFormSubmit() {
           credentials: "same-origin",
         });
 
-        if (!resp.ok){
+        if (!resp.ok) {
           const text = await resp.text();
 
           if (text.search("Could not serve without logging in") != -1) {
