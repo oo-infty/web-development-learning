@@ -1,7 +1,10 @@
 use std::net::SocketAddr;
 use std::sync::Arc;
 
-use axum::{routing::get, Router};
+use axum::{
+    routing::{get, post},
+    Router,
+};
 use snafu::{prelude::*, Whatever};
 use tokio::net::TcpListener;
 use tower_http::services::ServeDir;
@@ -26,7 +29,9 @@ impl Server {
     pub async fn serve(self) -> Result<(), Whatever> {
         let router = Router::new()
             .nest_service("/", ServeDir::new("static"))
-            .route("/api/start", get(super::handler::start::handle_start))
+            .route("/api/login", post(super::handler::login::handle_login))
+            .route("/api/start", post(super::handler::start::handle_start))
+            .route("/api/submit", post(super::handler::submit::handle_submit))
             .with_state(self.core);
 
         axum::serve(self.listener, router.into_make_service())

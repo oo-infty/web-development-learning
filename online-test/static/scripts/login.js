@@ -21,15 +21,20 @@ function registerInputUsername() {
 function registerButtonStart() {
   async function submit() {
     try {
-      const formData = new FormData(form);
-      const encodedData = new URLSearchParams(formData).toString();
+      let req = {
+        username: form.querySelector("input").value
+      };
 
-      const resp = await fetch("TODO", {
+      const resp = await fetch("../api/login", {
         method: "POST",
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: encodedData,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(req),
         credentials: "same-origin",
       });
+
+      if (!resp.ok) {
+        window.alert(`Internal Server Error: ${await resp.text()}`)
+      }
 
       return resp.ok;
     } catch (error) {

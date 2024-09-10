@@ -2,6 +2,7 @@ use std::collections::HashMap;
 use std::sync::Arc;
 
 use snafu::prelude::*;
+use tokio::sync::mpsc::error::TryRecvError;
 use tokio::sync::mpsc::{self, Receiver, Sender};
 use tokio::sync::oneshot;
 use tokio::sync::{Mutex, RwLock};
@@ -187,6 +188,8 @@ impl Core {
 
             if let Ok(Report::Exited { id }) = report {
                 let _ = self.sessions.write().await.remove(&id);
+            } else if let Err(TryRecvError::Empty) = report {
+                break;
             }
         }
     }

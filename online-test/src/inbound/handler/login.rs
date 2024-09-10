@@ -19,8 +19,8 @@ pub struct LoginResponse {
 }
 
 pub async fn handle_login(
-    Json(request): Json<LoginRequest>,
     State(core): State<Arc<Core>>,
+    Json(request): Json<LoginRequest>,
 ) -> Result<Json<LoginResponse>, ApiError> {
     let username = request.username;
     let user = User::try_new(username)

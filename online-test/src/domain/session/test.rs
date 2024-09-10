@@ -196,7 +196,7 @@ mod tests {
     async fn handle_generate_submit() {
         let (question_repository, score_repository, _select_count) = new_repository();
         let (mut session, _commander, _report) =
-            new_test_session(question_repository, score_repository);
+            new_test_session(question_repository, score_repository).await;
         let id = session.id();
 
         let actual = session.handle_generate().await.unwrap();
@@ -218,7 +218,7 @@ mod tests {
     async fn handle_not_started() {
         let (question_repository, score_repository, _select_count) = new_repository();
         let (mut session, _commander, _report) =
-            new_test_session(question_repository, score_repository);
+            new_test_session(question_repository, score_repository).await;
         let id = session.id();
 
         assert!(matches!(
@@ -233,7 +233,7 @@ mod tests {
     async fn handle_test_mismatched() {
         let (question_repository, score_repository, _select_count) = new_repository();
         let (mut session, _commander, _report) =
-            new_test_session(question_repository, score_repository);
+            new_test_session(question_repository, score_repository).await;
         let id = session.id();
 
         let actual = session.handle_generate().await.unwrap();
@@ -282,7 +282,7 @@ mod tests {
         )
     }
 
-    fn new_test_session(
+    async fn new_test_session(
         question_repository: Arc<dyn QuestionRepository>,
         score_repository: Arc<dyn ScoreRepository>,
     ) -> (
@@ -293,7 +293,7 @@ mod tests {
         let id_allocator = Arc::new(SequentialIdAllocator::new());
         let (commander, command) = mpsc::channel(4);
         let (reporter, report) = mpsc::channel(4);
-        let base = SessionBase::new(id_allocator, command, reporter);
+        let base = SessionBase::new(id_allocator, command, reporter).await;
         let session = TestSession::new(base, question_repository, score_repository);
         (session, commander, report)
     }

@@ -18,19 +18,30 @@ let intervalId;
 
 async function fetchQuestion() {
   try {
+    const req = {
+      login_id: 1,
+    };
+
     const resp = await fetch("../api/start", {
-      method: "GET",
+      method: "POST",
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req),
       credentials: "same-origin",
     });
 
+    const text = await resp.text();
+
     if (resp.ok) {
-      const text = await resp.text();
       return text;
     } else {
+      if (text.search("Could not serve without logging in") != -1) {
+        window.alert("Error: Not logined. You must login first to participate in the test!");
+        location.assign("../login.html");
+      }
+
       return null;
     }
   } catch (error) {
-    console.error(`Error: Could not fetch questions from ${url}: ${error}`)
     window.alert("Error: Could not fetch any question. Test aborted");
     location.assign("../index.html");
     return null;
@@ -49,7 +60,7 @@ function createSelectionAnswer(child, componentType) {
     input.setAttribute("type", componentType);
     input.setAttribute("id", `option-${id}-${String.fromCharCode(97 + index)}`);
     input.setAttribute("name", `question-${id}`);
-    input.setAttribute("value", String.fromCharCode(97 + index));
+    input.setAttribute("value", index);
     li.appendChild(input);
 
     const label = document.createElement("label");
@@ -122,16 +133,9 @@ async function generateQuestion() {
   }
 
   const json = JSON.parse(text);
-  const test = json.test;
 
-  // if (result == "not-logined") {
-  //   window.alert("Error: Not logined. You must login first to participate in the test!");
-  //   location.assign("../login.html");
-  //   return;
-  // }
-
-  testId = test.id;
-  const questions = test.questions;
+  testId = json.id;
+  const questions = json.questions;
 
   Array.from(questions).forEach(child => {
     const question = createQuestion(child);
@@ -232,28 +236,44 @@ function registerControlButton() {
 }
 
 
-function createAnswerForm() {
-  let formData = new FormData();
-  formData.append("test-id", testId);
-
+function createSubmissionJson() {
+  let answers = new Array();
   for (const question of questionContainer.children) {
     if (question.classList.contains("single-selection")) {
       const id = question.id.replace("question-", "");
       const radio = question.querySelector("input:checked");
-      formData.append(`single-${id}`, (radio ? radio.value : ""));
+      if (radio) {
+        answers.push({
+          type: "SingleSelection",
+          id: Number(id),
+          answer: Number(radio.value)
+        });
+      }
     } else if (question.classList.contains("multiple-selection")) {
       const id = question.id.replace("question-", "");
       const checkboxs = question.querySelectorAll("input:checked");
-      const answer = Array.from(checkboxs).map((ck) => ck.value).join('');
-      formData.append(`multiple-${id}`, answer);
+      const answer = Array.from(checkboxs).map((ck) => Number(ck.value));
+      answers.push({
+        type: "MultipleSelection",
+        id: Number(id),
+        answer: answer
+      });
     } else if (question.classList.contains("completion")) {
       const id = question.id.replace("question-", "");
       const inputbox = question.querySelector("input");
-      formData.append(`completion-${id}`, inputbox.value);
+      answers.push({
+        type: "Completion",
+        id: Number(id),
+        answer: inputbox.value,
+      });
     }
   }
 
-  return formData;
+  return JSON.stringify({
+    login_id: 1,
+    test_id: testId,
+    answers: answers,
+  });
 }
 
 function registerFormSubmit() {
@@ -263,40 +283,26 @@ function registerFormSubmit() {
 
     if (res) {
       try {
-        const formData = createAnswerForm();
-        const encodedData = new URLSearchParams(formData).toString();
+        const json = createSubmissionJson();
 
-        const resp = await fetch("TODO", {
+        const resp = await fetch("../api/submit", {
           method: "POST",
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: encodedData,
+          headers: { 'Content-Type': 'application/json' },
+          body: json,
           credentials: "same-origin",
         });
 
-        if (!resp.ok) {
-          window.alert("Error: Could not submit answers");
-          return;
-        }
+        if (!resp.ok){
+          const text = await resp.text();
 
-        const text = await resp.text();
-        const parser = new DOMParser();
-        const xml = parser.parseFromString(text, "application/xml");
-
-        if (!xml) {
-          window.alert("Error: Could not receive valid response");
-          return;
-        }
-
-        const root = xml.querySelector("root");
-        const result = root.querySelector("result").textContent;
-
-        if (result === "not-logined") {
-          window.alert("Error: Not logined. You must login first to participate in the test!");
-          location.assign("../login.html");
-          return;
-        } else if (result === "test-expired") {
-          window.alert("Error: Test expired. Please refresh the page");
-          return;
+          if (text.search("Could not serve without logging in") != -1) {
+            window.alert("Error: Not logined. You must login first to participate in the test!");
+            location.assign("../login.html");
+            return;
+          } else if (text.search("Test is not authencated by system or expired") != -1) {
+            window.alert("Error: Test is not authencated by OTSS or expired expired. Please refresh the page");
+            return;
+          }
         }
 
         if (intervalId) {

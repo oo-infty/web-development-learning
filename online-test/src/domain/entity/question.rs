@@ -30,7 +30,7 @@ pub struct SingleSelectionQuestion {
     id: Id,
     content: String,
     options: Vec<String>,
-    #[serde(flatten)]
+    #[serde(skip)]
     answer: SingleSelectionAnswer<StandardSource>,
 }
 
@@ -77,7 +77,7 @@ pub struct MultipleSelectionQuestion {
     id: Id,
     content: String,
     options: Vec<String>,
-    #[serde(flatten)]
+    #[serde(skip)]
     answer: MultipleSelectionAnswer<StandardSource>,
 }
 
@@ -123,7 +123,7 @@ impl AbstractQuestion for MultipleSelectionQuestion {
 pub struct CompletionQuestion {
     id: Id,
     content: String,
-    #[serde(flatten)]
+    #[serde(skip)]
     answer: CompletionAnswer<StandardSource>,
 }
 

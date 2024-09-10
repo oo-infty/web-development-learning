@@ -1,7 +1,12 @@
 use std::sync::Arc;
 
+use online_test::domain::entity::answer::{
+    CompletionAnswer, MultipleSelectionAnswer, SingleSelectionAnswer, StandardSource,
+};
 use online_test::domain::entity::id::Id;
-use online_test::domain::entity::question::Question;
+use online_test::domain::entity::question::{
+    CompletionQuestion, MultipleSelectionQuestion, Question, SingleSelectionQuestion,
+};
 use online_test::domain::entity::score::Score;
 use online_test::domain::entity::user::User;
 use online_test::domain::repository::question::{
@@ -41,7 +46,7 @@ impl QuestionRepository for Qr {
         options: Vec<String>,
         answer: u32,
     ) -> Result<(), QuestionRepositoryError> {
-        todo!()
+        Ok(())
     }
 
     async fn insert_multiple_selection(
@@ -50,7 +55,7 @@ impl QuestionRepository for Qr {
         options: Vec<String>,
         answer: Vec<u32>,
     ) -> Result<(), QuestionRepositoryError> {
-        todo!()
+        Ok(())
     }
 
     async fn insert_completion(
@@ -58,21 +63,89 @@ impl QuestionRepository for Qr {
         content: String,
         answer: String,
     ) -> Result<(), QuestionRepositoryError> {
-        todo!()
+        Ok(())
     }
 
     async fn select_questions(
         &self,
         select_count: SelectCount,
     ) -> Result<Vec<Question>, QuestionRepositoryError> {
-        todo!()
+        Ok(vec![
+            SingleSelectionQuestion::try_new(
+                0.into(),
+                "Which command is used to trace the system calls made by a process, and which options would you use to trace a specific process ID (PID) and output the results to a file?".into(),
+                vec![
+                    "<code>strace -p PID -o output.txt</code>".into(),
+                    "<code>strace -c -p PID > output.txt</code>".into(),
+                    "<code>strace -f -p PID | tee output.txt</code>".into(),
+                    "<code>strace -t -p PID > output.txt</code>".into(),
+                ],
+                SingleSelectionAnswer::<StandardSource>::try_new(0).unwrap(),
+            )
+            .unwrap()
+            .into(),
+            MultipleSelectionQuestion::try_new(
+                2.into(),
+                "In Linux, how can you check the IP address of network interfaces?".into(),
+                vec![
+                    "<code>ifconfig</code>".into(),
+                    "<code>ip addr show</code>".into(),
+                    "<code>netstat</code>".into(),
+                    "<code>ping</code>".into(),
+                ],
+                MultipleSelectionAnswer::<StandardSource>::try_new(vec![2, 3]).unwrap(),
+            )
+            .unwrap()
+            .into(),
+            CompletionQuestion::try_new(
+                3.into(),
+                "In Linux, which commands can be used to find files or directories?".into(),
+                CompletionAnswer::<StandardSource>::try_new("answer").unwrap(),
+            )
+            .unwrap()
+            .into(),
+        ])
     }
 
     async fn select_questions_by_id(
         &self,
         id: Vec<Id>,
     ) -> Result<Vec<Question>, QuestionRepositoryError> {
-        todo!()
+        Ok(vec![
+            SingleSelectionQuestion::try_new(
+                0.into(),
+                "Which command is used to trace the system calls made by a process, and which options would you use to trace a specific process ID (PID) and output the results to a file?".into(),
+                vec![
+                    "<code>strace -p PID -o output.txt</code>".into(),
+                    "<code>strace -c -p PID > output.txt</code>".into(),
+                    "<code>strace -f -p PID | tee output.txt</code>".into(),
+                    "<code>strace -t -p PID > output.txt</code>".into(),
+                ],
+                SingleSelectionAnswer::<StandardSource>::try_new(0).unwrap(),
+            )
+            .unwrap()
+            .into(),
+            MultipleSelectionQuestion::try_new(
+                2.into(),
+                "In Linux, how can you check the IP address of network interfaces?".into(),
+                vec![
+                    "<code>ifconfig</code>".into(),
+                    "<code>ip addr show</code>".into(),
+                    "<code>netstat</code>".into(),
+                    "<code>ping</code>".into(),
+                ],
+                MultipleSelectionAnswer::<StandardSource>::try_new(vec![2, 3]).unwrap(),
+            )
+            .unwrap()
+            .into(),
+            CompletionQuestion::try_new(
+                3.into(),
+                "In Linux, which commands can be used to find files or directories?".into(),
+                CompletionAnswer::<StandardSource>::try_new("answer").unwrap(),
+            )
+            .unwrap()
+            .into(),
+        ])
     }
 }
 
@@ -88,7 +161,7 @@ impl ScoreRepository for Sr {
         end_time: Instant,
         duration: Duration,
     ) -> Result<(), ScoreRepositoryError> {
-        todo!()
+        Ok(())
     }
 
     async fn query_all_sorted(&self, user: &User) -> Result<Vec<Record>, ScoreRepositoryError> {
