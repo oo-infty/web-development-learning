@@ -33,7 +33,11 @@
         in
           mkShell {
             buildInputs = [ rust ];
-            packages = with pkgs; [ nil ];
+            packages = with pkgs; [
+              diesel-cli
+              nil
+              sqlite
+            ];
           };
 
         devShells.ci = let

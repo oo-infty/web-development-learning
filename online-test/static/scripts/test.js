@@ -116,7 +116,7 @@ function createQuestion(child) {
   section.appendChild(h1);
 
   const p = document.createElement("p");
-  p.textContent = child.content;
+  p.innerHTML = child.content;
   section.appendChild(p);
 
   if (className == "single-selection") {

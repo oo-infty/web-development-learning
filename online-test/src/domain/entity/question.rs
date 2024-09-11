@@ -42,7 +42,7 @@ impl SingleSelectionQuestion {
         answer: SingleSelectionAnswer<StandardSource>,
     ) -> Result<Self, TryNewQuestionError> {
         ensure!(!content.is_empty(), ContentEmptySnafu);
-        ensure!(!options.is_empty(), NoOptionSnafu);
+        ensure!(options.len() == 4, OptionInsufficientSnafu);
         ensure!(options.iter().all(|o| !o.is_empty()), OptionEmptySnafu);
 
         Ok(Self {
@@ -89,7 +89,7 @@ impl MultipleSelectionQuestion {
         answer: MultipleSelectionAnswer<StandardSource>,
     ) -> Result<Self, TryNewQuestionError> {
         ensure!(!content.is_empty(), ContentEmptySnafu);
-        ensure!(!options.is_empty(), NoOptionSnafu);
+        ensure!(options.len() == 4, OptionInsufficientSnafu);
         ensure!(options.iter().all(|o| !o.is_empty()), OptionEmptySnafu);
 
         Ok(Self {
@@ -164,8 +164,8 @@ pub enum TryNewQuestionError {
     ContentEmpty,
     #[snafu(display("Question must not have empty option"))]
     OptionEmpty,
-    #[snafu(display("Question must have at least one option"))]
-    NoOption,
+    #[snafu(display("Question must have four options"))]
+    OptionInsufficient,
 }
 
 #[cfg(test)]
@@ -178,7 +178,12 @@ mod tests {
             SingleSelectionQuestion::try_new(
                 0.into(),
                 "".into(),
-                vec!["option-0".into()],
+                vec![
+                    "option-0".into(),
+                    "option-1".into(),
+                    "option-2".into(),
+                    "option-3".into(),
+                ],
                 SingleSelectionAnswer::<StandardSource>::try_new(0)
                     .unwrap()
                     .into()
@@ -188,17 +193,17 @@ mod tests {
     }
 
     #[test]
-    fn question_try_new_no_option() {
+    fn question_try_new_option_insufficient() {
         assert!(matches!(
             MultipleSelectionQuestion::try_new(
                 0.into(),
                 "content".into(),
-                vec![],
+                vec!["option-0".into()],
                 MultipleSelectionAnswer::<StandardSource>::try_new(vec![0])
                     .unwrap()
                     .into()
             ),
-            Err(TryNewQuestionError::NoOption),
+            Err(TryNewQuestionError::OptionInsufficient),
         ));
     }
 
@@ -208,7 +213,12 @@ mod tests {
             SingleSelectionQuestion::try_new(
                 0.into(),
                 "content".into(),
-                vec!["".into()],
+                vec![
+                    "option-0".into(),
+                    "option-1".into(),
+                    "option-2".into(),
+                    "".into(),
+                ],
                 SingleSelectionAnswer::<StandardSource>::try_new(0)
                     .unwrap()
                     .into()
@@ -222,7 +232,12 @@ mod tests {
         let question: Question = SingleSelectionQuestion::try_new(
             0.into(),
             "content".into(),
-            vec!["option-0".into()],
+            vec![
+                "option-0".into(),
+                "option-1".into(),
+                "option-2".into(),
+                "option-3".into(),
+            ],
             SingleSelectionAnswer::<StandardSource>::try_new(0)
                 .unwrap()
                 .into(),

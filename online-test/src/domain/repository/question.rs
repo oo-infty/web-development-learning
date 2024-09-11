@@ -44,6 +44,7 @@ pub trait QuestionRepository: Debug + Send + Sync + 'static {
 
 #[derive(Debug, Snafu)]
 #[non_exhaustive]
+#[snafu(visibility(pub(crate)))]
 pub enum QuestionRepositoryError {
     #[snafu(display("Could not create valid answer"))]
     AnswerInvalid { source: TryNewAnswerError },

@@ -1,10 +1,7 @@
 use std::net::SocketAddr;
 use std::sync::Arc;
 
-use axum::{
-    routing::{get, post},
-    Router,
-};
+use axum::{routing::post, Router};
 use snafu::{prelude::*, Whatever};
 use tokio::net::TcpListener;
 use tower_http::services::ServeDir;

@@ -229,8 +229,8 @@ pub enum LoginSessionError {
 mod tests {
     use std::collections::HashMap;
 
+    use chrono::{DateTime, Utc};
     use tokio::sync::mpsc::{self, Receiver as MpscReceiver, Sender as MpscSender};
-    use tokio::time::Instant;
 
     use crate::domain::entity::id::SequentialIdAllocator;
     use crate::domain::entity::question::Question;
@@ -240,6 +240,8 @@ mod tests {
     use crate::domain::session::base::Report;
 
     use super::*;
+
+    const END_TIME: DateTime<Utc> = DateTime::from_timestamp_nanos(0);
 
     #[tokio::test(start_paused = true)]
     async fn login_session_start_submit() {
@@ -275,25 +277,20 @@ mod tests {
             session.handle_query(QueryKind::Best).await.unwrap(),
             Record {
                 score: Score::try_new(100f32).unwrap(),
-                end_time: Instant::now(),
+                end_time: END_TIME,
                 duration: Duration::from_secs(0),
             }
         );
 
-        assert_eq!(
-            session.handle_query(QueryKind::Latest).await.unwrap(),
-            Record {
-                score: Score::try_new(100f32).unwrap(),
-                end_time: Instant::now(),
-                duration: Duration::from_secs(0),
-            }
-        );
+        let res = session.handle_query(QueryKind::Latest).await.unwrap();
+        assert_eq!(res.score, Score::try_new(100f32).unwrap());
+        assert_eq!(res.duration, Duration::from_secs(0));
 
         assert_eq!(
             session.handle_query_all().await.unwrap(),
             vec![Record {
                 score: Score::try_new(100f32).unwrap(),
-                end_time: Instant::now(),
+                end_time: END_TIME,
                 duration: Duration::from_secs(0),
             }]
         );
@@ -422,21 +419,21 @@ mod tests {
         score_repository.expect_query_latest().returning(|_| {
             Ok(Record {
                 score: Score::try_new(100f32).unwrap(),
-                end_time: Instant::now(),
+                end_time: Utc::now(),
                 duration: Duration::from_secs(0),
             })
         });
         score_repository.expect_query_best().returning(|_| {
             Ok(Record {
                 score: Score::try_new(100f32).unwrap(),
-                end_time: Instant::now(),
+                end_time: END_TIME,
                 duration: Duration::from_secs(0),
             })
         });
         score_repository.expect_query_all_sorted().returning(|_| {
             Ok(vec![Record {
                 score: Score::try_new(100f32).unwrap(),
-                end_time: Instant::now(),
+                end_time: END_TIME,
                 duration: Duration::from_secs(0),
             }])
         });

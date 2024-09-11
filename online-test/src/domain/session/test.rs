@@ -41,9 +41,9 @@ impl TestSession {
 
     async fn handle_generate(&mut self) -> Result<Test, TestSessionError> {
         const SELECT_COUNT: SelectCount = SelectCount {
-            single_selection: 1,
-            multiple_selection: 1,
-            completion: 1,
+            single_selection: 3,
+            multiple_selection: 3,
+            completion: 4,
         };
 
         let questions = self
