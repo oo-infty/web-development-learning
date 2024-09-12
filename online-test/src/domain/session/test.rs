@@ -1,8 +1,9 @@
 use std::sync::Arc;
 
+use chrono::{DateTime, Utc};
 use snafu::prelude::*;
 use tokio::sync::oneshot::Sender as OneshotSender;
-use tokio::time::{Duration, Instant};
+use tokio::time::Duration;
 
 use crate::domain::entity::id::Id;
 use crate::domain::entity::question::AbstractQuestion;
@@ -21,7 +22,7 @@ pub struct TestSession {
     question_repository: Arc<dyn QuestionRepository>,
     score_repository: Arc<dyn ScoreRepository>,
     question_ids: Option<Vec<Id>>,
-    start_time: Option<Instant>,
+    start_time: Option<DateTime<Utc>>,
 }
 
 impl TestSession {
@@ -41,9 +42,9 @@ impl TestSession {
 
     async fn handle_generate(&mut self) -> Result<Test, TestSessionError> {
         const SELECT_COUNT: SelectCount = SelectCount {
-            single_selection: 3,
-            multiple_selection: 3,
-            completion: 4,
+            single_selection: 8,
+            multiple_selection: 8,
+            completion: 12,
         };
 
         let questions = self
@@ -54,7 +55,7 @@ impl TestSession {
 
         let question_ids = questions.iter().map(|q| q.id()).collect();
         self.question_ids = Some(question_ids);
-        self.start_time = Some(Instant::now());
+        self.start_time = Some(Utc::now());
         Ok(Test::new(self.id(), questions))
     }
 
@@ -85,12 +86,12 @@ impl TestSession {
         let test = Test::new(test_id, questions);
         let score = test.grade(&submission);
 
-        let end_time = Instant::now();
+        let end_time = Utc::now();
         let duration = self
             .start_time
             .take()
             .map_or(Self::SESSION_EXPIRE_TIMEOUT, |start_time| {
-                end_time - start_time
+                (end_time - start_time).to_std().unwrap_or_default()
             });
 
         self.score_repository
@@ -207,11 +208,7 @@ mod tests {
             .handle_submit(User::try_new("user").unwrap(), id, new_submission())
             .await
             .unwrap();
-        let expected = TestSummary {
-            score: Score::try_new(75f32).unwrap(),
-            duration: Duration::from_secs(0),
-        };
-        assert_eq!(actual, expected);
+        assert_eq!(actual.score, Score::try_new(75f32).unwrap());
     }
 
     #[tokio::test(start_paused = true)]

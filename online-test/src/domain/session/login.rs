@@ -256,13 +256,7 @@ mod tests {
         assert_eq!(res, Test::new(id, Vec::new()));
 
         let res = session.handle_submit(id, new_submission()).await.unwrap();
-        assert_eq!(
-            res,
-            TestSummary {
-                score: Score::try_new(100f32).unwrap(),
-                duration: Duration::from_secs(0)
-            }
-        );
+        assert_eq!(res.score, Score::try_new(100f32).unwrap());
     }
 
     #[tokio::test(start_paused = true)]

@@ -88,24 +88,3 @@ pub async fn handle_submit(
         Ok(())
     }
 }
-
-#[test]
-fn ttt() {
-    let s = SubmitRequest {
-        login_id: 1,
-        test_id: 1,
-        answers: vec![
-            AnswerWithId {
-                id: 0,
-                answer: AnswerVariant::MultipleSelection { answer: vec![0] },
-            },
-            AnswerWithId {
-                id: 1,
-                answer: AnswerVariant::Completion {
-                    answer: "aa".into(),
-                },
-            },
-        ],
-    };
-    println!("{}", serde_json::to_string_pretty(&s).unwrap());
-}

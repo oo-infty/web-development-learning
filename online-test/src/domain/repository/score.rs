@@ -4,7 +4,7 @@ use std::fmt::Debug;
 use async_trait::async_trait;
 use chrono::{DateTime, Utc};
 use snafu::prelude::*;
-use tokio::time::{Duration, Instant};
+use tokio::time::Duration;
 
 use crate::domain::entity::score::Score;
 use crate::domain::entity::user::User;
@@ -16,7 +16,7 @@ pub trait ScoreRepository: Debug + Send + Sync + 'static {
         &self,
         user: User,
         score: Score,
-        end_time: Instant,
+        end_time: DateTime<Utc>,
         duration: Duration,
     ) -> Result<(), ScoreRepositoryError>;
 
@@ -29,6 +29,7 @@ pub trait ScoreRepository: Debug + Send + Sync + 'static {
 
 #[derive(Debug, Snafu)]
 #[non_exhaustive]
+#[snafu(visibility(pub(crate)))]
 pub enum ScoreRepositoryError {
     #[snafu(display("Could not find username {}", user.inner()))]
     NotFound { user: User },

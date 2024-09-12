@@ -6,9 +6,9 @@ use serde::{Deserialize, Serialize};
 use snafu::prelude::*;
 
 use crate::domain::application::{Core, CoreError};
-use crate::domain::repository::score::Record;
-use crate::domain::session::login::QueryKind;
-use crate::inbound::error::{ApiError, NotLoggedInSnafu, UnknownSnafu};
+use crate::domain::repository::score::{Record, ScoreRepositoryError};
+use crate::domain::session::login::{LoginSessionError, QueryKind};
+use crate::inbound::error::{ApiError, NotLoggedInSnafu, UnknownSnafu, UserNotFoundSnafu};
 
 #[derive(Debug, Deserialize)]
 pub struct QueryRequest {
@@ -57,9 +57,17 @@ pub async fn handle_query(
     };
 
     if let Err(err) = res {
-        match err {
+        match &err {
             CoreError::SessionNotFound { .. } => NotLoggedInSnafu.fail(),
-            _ => Err(err.into()).context(UnknownSnafu),
+            CoreError::LoginSession { source, .. } => match source {
+                LoginSessionError::Query { source } => match source {
+                    ScoreRepositoryError::NotFound { user } => {
+                        UserNotFoundSnafu { user: user.clone() }.fail()
+                    }
+                    _ => Err(err.into()).context(UnknownSnafu),
+                },
+                _ => Err(err.into()).context(UnknownSnafu),
+            },
         }
     } else {
         let response = QueryResponse {
