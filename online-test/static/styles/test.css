@@ -16,7 +16,7 @@ body {
   grid-area: test-panel;
   width: 20vw;
   box-sizing: border-box;
-  background-color: #232323;
+  background-color: #1a1a1a;
   border-right: 1px solid gray;
 
   display: flex;

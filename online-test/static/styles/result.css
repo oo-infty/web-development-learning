@@ -4,7 +4,7 @@ body {
   grid-template-rows: auto 1fr;
   min-height: 100vh;
   background-image:
-  linear-gradient(90deg, rgb(0, 0, 0, 80%), transparent),
+    linear-gradient(90deg, rgb(0, 0, 0, 80%), transparent),
     /* https://unsplash.com/photos/shallow-focus-photography-of-computer-codes-BfrQnKBulYQ */
     url("../assets/images/background-result.jpg");
   background-size: cover;
