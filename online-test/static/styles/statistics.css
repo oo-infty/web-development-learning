@@ -1,0 +1,82 @@
+body {
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: auto 1fr;
+  min-height: 100vh;
+}
+
+.statistics-body {
+  padding: 2rem;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+}
+
+.statistics-table {
+  font-size: 1.25rem;
+  text-align: center;
+}
+
+.statistics-table {
+  table-layout: fixed;
+  width: 75%;
+  border-collapse: collapse;
+}
+
+.statistics-table caption {
+  padding: 0.75rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.statistics-table thead th:nth-child(1) {
+  width: 20%;
+}
+
+.statistics-table thead th:nth-child(2) {
+  width: 20%;
+}
+
+.statistics-table thead th:nth-child(3) {
+  width: 30%;
+}
+
+.statistics-table thead th:nth-child(4) {
+  width: 30%;
+}
+
+.statistics-table th,
+.statistics-table td {
+  padding: 0.5rem;
+}
+
+.statistics-table thead tr {
+  background-color: rgb(50, 50, 50, 70%);
+}
+
+.statistics-table tbody tr:nth-child(odd) {
+  background-color: rgb(50, 50, 50, 30%);
+}
+
+.statistics-table tbody tr:nth-child(even) {
+  background-color: rgb(50, 50, 50, 60%);
+}
+
+.statistics-table thead tr {
+  border-top: 1.5px white solid;
+  border-bottom: 1.5px white solid;
+}
+
+.statistics-table tbody tr {
+  border-top: 1px rgb(160, 160, 160) solid;
+  border-bottom: 1px rgb(160, 160, 160) solid;
+}
+
+.statistics-table tr {
+  transition: background-color 0.25s;
+}
+
+.statistics-table thead tr:hover,
+.statistics-table tbody tr:hover {
+  background-color: rgb(70, 70, 70, 80%);
+}

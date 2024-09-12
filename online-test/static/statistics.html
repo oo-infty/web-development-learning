@@ -1,16 +1,19 @@
 <!DOCTYPE html>
-<html lang="en-US">
+<html>
 
 <head>
-  <meta charset="utf-8">
-  <title>OTSS - Open Test System for Sysadmin</title>
+  <meta charset="utf-8" />
+  <title>OTSS - Statistic</title>
 
   <link href="https://fonts.font.im/css?family=Open+Sans|Source+Code+Pro" rel="stylesheet">
 
   <link rel="stylesheet" href="./styles/common.css" />
   <link rel="stylesheet" href="./styles/components/button.css" />
   <link rel="stylesheet" href="./styles/layouts/navigation.css" />
-  <link rel="stylesheet" href="./styles/index.css" />
+  <link rel="stylesheet" href="./styles/layouts/card.css" />
+  <link rel="stylesheet" href="./styles/statistics.css" />
+
+  <script src="./scripts/statistics.js" defer></script>
 </head>
 
 <body>
@@ -48,17 +51,28 @@
     </ul>
   </nav>
 
-  <main class="index-body">
-    <div class="index-introduction">
-      <h1>Open Test System for Sysadmin</h1>
-      <p>System Administrator Redefined</p>
-    </div>
-
-    <div class="index-entrance">
-      <a href="./test.html" class="round-addr-button">
-        <p>Start</p>
-      </a>
-    </div>
+  <main class="statistics-body">
+    <table class="statistics-table">
+      <caption>Statistics of Test Scores</caption>
+      <thead>
+        <tr>
+          <th scope="col">Number</th>
+          <th scope="col">Score</th>
+          <th scope="col">End Time</th>
+          <th scope="col">Duration</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- To be filled by JavaScript
+          <tr>
+            <td>1</td>
+            <td>100 pts</td>
+            <td>2024-09-12 21:07:00</td>
+            <td>10 min 30 s</td>
+          </tr>
+        -->
+      </tbody>
+    </table>
   </main>
 </body>
 

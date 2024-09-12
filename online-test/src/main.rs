@@ -8,7 +8,7 @@ use snafu::{prelude::*, Whatever};
 use online_test::domain::application::Core;
 use online_test::inbound::server::Server;
 
-#[tokio::main]
+#[tokio::main(flavor = "current_thread")]
 #[snafu::report]
 async fn main() -> Result<(), Whatever> {
     let config = AsyncSqliteConnectionManager::new("production/data.db");
@@ -22,7 +22,7 @@ async fn main() -> Result<(), Whatever> {
 
     let core = Arc::new(Core::new(question_repository, score_repository));
 
-    let addr = std::env::var("SERVER_ADDR").unwrap_or("127.0.0.1:8080".to_owned());
+    let addr = std::env::var("SERVER_ADDR").unwrap_or("0.0.0.0:8080".to_owned());
     Server::new(addr.parse().unwrap(), core)
         .await
         .unwrap()
