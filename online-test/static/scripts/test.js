@@ -45,11 +45,15 @@ async function fetchQuestion() {
       if (text.search("Could not serve without logging in") != -1) {
         window.alert("Error: Not logined. You must login first to participate in the test!");
         location.assign("../login.html");
+      } else {
+        console.error(text);
+        window.alert(`Internal Server Error: ${text}`);
       }
 
       return null;
     }
   } catch (error) {
+    console.error(error);
     window.alert("Error: Could not fetch any question. Test aborted");
     location.assign("../index.html");
     return null;
@@ -314,11 +318,13 @@ function registerFormSubmit() {
           if (text.search("Could not serve without logging in") != -1) {
             window.alert("Error: Not logined. You must login first to participate in the test!");
             location.assign("../login.html");
-            return;
           } else if (text.search("Test is not authencated by system or expired") != -1) {
             window.alert("Error: Test is not authencated by OTSS or expired expired. Please refresh the page");
-            return;
+          } else {
+            console.error(text);
+            window.alert(`Internal Server Error: ${text}`);
           }
+          return;
         }
 
         if (intervalId) {

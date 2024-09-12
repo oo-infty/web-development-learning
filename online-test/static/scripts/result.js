@@ -33,7 +33,7 @@ async function fetchQueryResult() {
         location.assign("../login.html");
       } else {
         window.alert(`Internal Server Error: ${text}`);
-        location.assign("../login.html");
+        location.assign("../index.html");
       }
       return null;
     }
@@ -47,7 +47,7 @@ async function fetchQueryResult() {
 
 async function generateDemonstration() {
   const res = await fetchQueryResult();
-  const score = res.result[0].score;
+  const score = Math.round(res.result[0].score * 10) / 10;
   const min = Math.floor(res.result[0].duration / 60);
   const sec = res.result[0].duration % 60;
 
