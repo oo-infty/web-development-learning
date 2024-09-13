@@ -213,7 +213,7 @@ impl CompletionAnswer<SubmissionSource> {
 
 #[derive(Debug, Clone, Snafu, PartialEq, Eq)]
 pub enum TryNewAnswerError {
-    #[snafu(display("Multiple selection have duplicated options"))]
+    #[snafu(display("Multiple selection has duplicated options"))]
     OptionDuplicated,
     #[snafu(display("Multiple selection must have at least one correct option"))]
     OptionEmpty,

@@ -109,6 +109,70 @@ impl QuestionRepository for QuestionSqliteRepository {
         Ok(())
     }
 
+    async fn remove_question(&self, id: Id) -> Result<(), QuestionRepositoryError> {
+        use crate::repository::schema::questions::dsl;
+
+        let mut connection = self
+            .pool
+            .get()
+            .await
+            .map_err(|err| -> Box<dyn Error + Send> { Box::new(err) })
+            .whatever_context("Could not connect to database")?;
+
+        diesel::delete(dsl::questions)
+            .filter(dsl::id.eq(id.inner() as i32))
+            .execute(&mut connection)
+            .await
+            .map_err(|err| -> Box<dyn Error + Send> { Box::new(err) })
+            .whatever_context("Could not delete question")?;
+
+        Ok(())
+    }
+
+    async fn list_questions(
+        &self,
+        limits: usize,
+    ) -> Result<Vec<Vec<String>>, QuestionRepositoryError> {
+        use crate::repository::schema::questions::dsl;
+
+        let mut connection = self
+            .pool
+            .get()
+            .await
+            .map_err(|err| -> Box<dyn Error + Send> { Box::new(err) })
+            .whatever_context("Could not connect to database")?;
+
+        let questions: Vec<DbQuestionPreview> = dsl::questions
+            .select(DbQuestionPreview::as_select())
+            .limit(limits as i64)
+            .order_by(dsl::id.desc())
+            .load(&mut connection)
+            .await
+            .map_err(|err| -> Box<dyn Error + Send> { Box::new(err) })
+            .whatever_context("Could not load questions from database")?;
+
+        let questions = questions
+            .into_iter()
+            .rev()
+            .map(|qp| {
+                let id = qp.id.to_string();
+                let kind = match qp.kind {
+                    DbQuestionKind::SINGLE_SELECTION => "Single-Selection".to_owned(),
+                    DbQuestionKind::MULTIPLE_SELECTION => "Multiple-Selection".to_owned(),
+                    DbQuestionKind::COMPLETION => "Completion".to_owned(),
+                    _ => unreachable!(),
+                };
+                let mut content = qp.content.chars().take(65).collect::<String>();
+                if content.len() == 65 {
+                    content.push_str("...");
+                }
+                vec![id, kind, content]
+            })
+            .collect();
+
+        Ok(questions)
+    }
+
     async fn select_questions(
         &self,
         select_count: SelectCount,
@@ -317,6 +381,15 @@ impl DbQuestion {
         CompletionQuestion::try_new((self.id as usize).into(), self.content, answer)
             .unwrap_or_else(|_| unreachable!("Question should be already validated"))
     }
+}
+
+#[derive(Debug, Queryable, Selectable)]
+#[diesel(table_name = crate::repository::schema::questions)]
+#[diesel(check_for_backend(diesel::sqlite::Sqlite))]
+struct DbQuestionPreview {
+    id: i32,
+    kind: i32,
+    content: String,
 }
 
 struct DbQuestionKind;

@@ -31,6 +31,13 @@ pub trait QuestionRepository: Debug + Send + Sync + 'static {
         answer: String,
     ) -> Result<(), QuestionRepositoryError>;
 
+    async fn remove_question(&self, id: Id) -> Result<(), QuestionRepositoryError>;
+
+    async fn list_questions(
+        &self,
+        limits: usize,
+    ) -> Result<Vec<Vec<String>>, QuestionRepositoryError>;
+
     async fn select_questions(
         &self,
         select_count: SelectCount,
