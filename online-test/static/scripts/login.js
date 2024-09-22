@@ -55,9 +55,9 @@ function registerButtonStart() {
 
     if (7 < hour && hour < 12) {
       greet = "Good morning. ";
-    } else if (hour < 18) {
+    } else if (12 <= hour && hour < 18) {
       greet = "Good afternoon. ";
-    } else if (hour < 23) {
+    } else if (18 <= hour && hour < 23) {
       greet = "Good evening. ";
     } else {
       greet = "";
