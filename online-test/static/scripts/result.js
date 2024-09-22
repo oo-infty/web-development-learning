@@ -61,10 +61,10 @@ async function generateDemonstration() {
   const paraLevelValue = demonstration.querySelector("#card-level p:last-child");
 
   if (score >= 90) {
-    paraLevelHeader.textContent = "Congradulations! You are now";
+    paraLevelHeader.textContent = "Congratulations! You are now";
     paraLevelValue.textContent = "ADVANCED CERTIFIED SYSTEM ADMINISTRATOR";
   } else if (score >= 75) {
-    paraLevelHeader.textContent = "Congradulations! You are now";
+    paraLevelHeader.textContent = "Congratulations! You are now";
     paraLevelValue.textContent = "CERTIFIED SYSTEM ADMINISTRATOR";
   } else {
     paraLevelHeader.textContent = "Never mind. You have already made";

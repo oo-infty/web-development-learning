@@ -196,7 +196,7 @@ function registerNavigation() {
 function registerCountdown() {
   const endInstant = Date.now() + TOTAL_DURATION_SECONDS * 1000;
 
-  function updateCounddown() {
+  function updateCountdown() {
     const remainingSeconds = Math.floor((endInstant - Date.now()) / 1000);
 
     if (remainingSeconds === 0) {
@@ -221,8 +221,8 @@ function registerCountdown() {
     countdown.textContent = `${padZero(minutes)}:${padZero(seconds)}`;
   }
 
-  intervalId = setInterval(updateCounddown, 1000);
-  updateCounddown();
+  intervalId = setInterval(updateCountdown, 1000);
+  updateCountdown();
 }
 
 function registerControlButton() {
