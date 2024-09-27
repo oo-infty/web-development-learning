@@ -199,7 +199,7 @@ function registerCountdown() {
   function updateCountdown() {
     const remainingSeconds = Math.floor((endInstant - Date.now()) / 1000);
 
-    if (remainingSeconds === 0) {
+    if (remainingSeconds < 0) {
       askSubmit = false;
       window.alert("The test is over. All answers will be submitted automatically.")
       questionContainer.requestSubmit();
