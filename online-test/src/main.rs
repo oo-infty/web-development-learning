@@ -71,6 +71,8 @@ async fn main() -> Result<(), Whatever> {
             let core = Arc::new(Core::new(question_repository, score_repository));
 
             let listening_addr = format!("{listening_ip}:{listening_port}");
+            println!("Listening on {listening_addr}");
+
             Server::new(listening_addr.parse().unwrap(), core)
                 .await
                 .whatever_context("Could not initialize server")?

@@ -332,6 +332,23 @@ function registerFormSubmit() {
           intervalId = null;
         }
 
+        const request = {
+          login_id: Number(sessionStorage.getItem("loginId")),
+          kind: "latest",
+        };
+
+        const resp2 = await fetch("../api/query", {
+          method: "POST",
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(request),
+          credentials: "same-origin",
+        });
+
+        const text = await resp2.text();
+        const res = JSON.parse(text);
+        const score = Math.round(res.result[0].score * 10) / 10;
+        window.alert(`Your score is ${score} pts`);
+
         location.assign("../result.html?query=latest");
       } catch (error) {
         console.error(error);
